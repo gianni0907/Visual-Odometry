@@ -28,4 +28,11 @@ namespace pr{
                            const Vec2fVector& img2_points,
                            Vec3fVector& points,
                            std::vector<float>& errors);
+
+
+    void essential2transform(const Eigen::Matrix3f& E,
+                             Eigen::Isometry3f& X1,
+                             Eigen::Isometry3f& X2);
+
+    const Eigen::Matrix3f transform2essential(const Eigen::Isometry3f& X);
 }

@@ -47,12 +47,12 @@ namespace pr{
                    -d1.z(), d2.z();
         dir_mat_t=dir_mat.transpose();
         s=-(dir_mat_t*dir_mat).inverse()*(dir_mat_t*o2);
-        if (s.x()<0 || s.y()<0){
+        if (s(0)<0 || s(1)<0){
             cerr << "Point behind one of the two cameras" << endl;
             return false;
         }
-        triangulated_p1=d1*s.x();
-        triangulated_p2=d2*s.y()+o2;
+        triangulated_p1=d1*s(0);
+        triangulated_p2=d2*s(1)+o2;
         error=(triangulated_p1-triangulated_p2).norm();
         point=0.5*(triangulated_p1+triangulated_p2);
         return true;
@@ -102,4 +102,49 @@ namespace pr{
         errors.resize(num_success);
         return num_success;
     }
+
+    void essential2transform(const Eigen::Matrix3f& E,
+                             Eigen::Isometry3f& X1,
+                             Eigen::Isometry3f& X2){
+        Eigen::Matrix3f W,R1,R2,skew_t1,skew_t2;
+        Eigen::Vector3f t1,t2;
+        W << 0, -1, 0,
+             1, 0, 0,
+             0, 0, 1;
+        Eigen::JacobiSVD<Eigen::Matrix3f> svd(E, Eigen::ComputeFullU | Eigen::ComputeFullV);
+        Eigen::JacobiSVD<Eigen::Matrix3f> svd_m(-E, Eigen::ComputeFullU | Eigen::ComputeFullV);
+        R1=svd.matrixV()*W*svd.matrixU().transpose();
+        R2=svd.matrixV()*W.transpose()*svd.matrixU().transpose();
+        if (R1.determinant()<0){
+            R1=svd_m.matrixV()*W*svd_m.matrixU().transpose();
+            R2=svd_m.matrixV()*W.transpose()*svd_m.matrixU().transpose();
+        }
+        skew_t1=R1*E;
+        skew_t2=R2*E;
+        std::cout << skew_t1 << std::endl;
+        std::cout << skew_t2 << std::endl;
+        X1.linear()=R1;
+        X1.translation() << skew_t1(2,1)-skew_t1(1,2),
+                            skew_t1(0,2)-skew_t1(2,0),
+                            skew_t1(1,0)-skew_t1(0,1);
+        
+        X2.linear()=R2;
+        X2.translation() << skew_t2(2,1)-skew_t2(1,2),
+                            skew_t2(0,2)-skew_t2(2,0),
+                            skew_t2(1,0)-skew_t2(0,1);
+    }
+
+    const Eigen::Matrix3f transform2essential(const Eigen::Isometry3f& X){
+        Eigen::Matrix3f R;
+        Eigen::Matrix3f skew_t;
+        Eigen::Vector3f t;
+        R=X.linear();
+        t=X.translation();
+        skew_t << 0, -t(2), t(1),
+                  t(2), 0, -t(0),
+                  -t(1), t(0), 0;
+        return R.transpose()*skew_t;
+    }
+
+
 }
