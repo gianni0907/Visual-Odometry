@@ -6,6 +6,18 @@ using namespace std;
 using namespace pr;
 
 int main(int argc, char** argv){
+
+    
+    // bool success=false;
+    // float error=-1;
+    // Eigen::Vector3f o2,d1,d2,p;
+    // o2 << -1.5, 0, 0;
+    // d1 << 1, 1, 2;
+    // d2 << 2.5, 1, 2;
+    // success=triangulatePoint(o2,d1,d2,p,error);
+    // cout << p << endl;
+
+
     // generate 3d points in the world
     Vec3fVector world_points,triangulated_world_points;
     vector<float> errors;
@@ -28,7 +40,7 @@ int main(int argc, char** argv){
     //Consider an homogeneous transformation expressing the cam1(world) wrt cam2
     Eigen::Isometry3f relative_X;
     relative_X=Eigen::Isometry3f::Identity();
-    relative_X.translation()=Eigen::Vector3f(-2.0f, 0.0f, 0.0f);
+    relative_X.translation()=Eigen::Vector3f(-1.5f, -1.5f, 0.0f);
     cout << relative_X.linear() << endl;
     cout << relative_X.translation() << endl;
     // instantiate the camera

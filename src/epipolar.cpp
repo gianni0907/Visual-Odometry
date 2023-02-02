@@ -47,12 +47,12 @@ namespace pr{
                    -d1.z(), d2.z();
         dir_mat_t=dir_mat.transpose();
         s=-(dir_mat_t*dir_mat).inverse()*(dir_mat_t*o2);
-        if (s(1)<0 || s(2)<0){
+        if (s.x()<0 || s.y()<0){
             cerr << "Point behind one of the two cameras" << endl;
             return false;
         }
-        triangulated_p1=d1*s(1);
-        triangulated_p2=d2*s(2);
+        triangulated_p1=d1*s.x();
+        triangulated_p2=d2*s.y()+o2;
         error=(triangulated_p1-triangulated_p2).norm();
         point=0.5*(triangulated_p1+triangulated_p2);
         return true;
@@ -76,7 +76,7 @@ namespace pr{
         //first select only points projected in both images
         img1_matching_points.resize(img1_points.size());
         img2_matching_points.resize(img2_points.size());
-        points.resize(img2_points.size());
+        points.resize(img1_points.size());
         errors.resize(img1_points.size());
         pruneUnmatchingProjectedPoints(img1_points,
                                        img2_points,
