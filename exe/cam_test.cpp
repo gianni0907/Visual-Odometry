@@ -8,10 +8,11 @@ int main (int argc, char** argv){
     
     // generate 3d points in the world
     Vec3fVector world_points;
+    Vec2fVector img_points;
     Eigen::Vector3f lower_left_bottom(-10,-10,-10);
     Eigen::Vector3f upper_right_top(10,10,10);
     int num_points=100;
-    int projected_points=0;
+    int num_projected_points=0;
     makeWorld(world_points,
               lower_left_bottom,
               upper_right_top,
@@ -37,9 +38,8 @@ int main (int argc, char** argv){
     char key=0;
     const char ESC_key=27;
     while (key!=ESC_key){
-        Vec2fVector img_points;
-        projected_points=cam.projectPoints(img_points, world_points, false);
-        cout << "Number of projected points: " << projected_points << endl;
+        num_projected_points=cam.projectPoints(img_points, world_points, false);
+        cout << "Number of projected points: " << num_projected_points << endl;
         RGBImage shown_image(height,width);
         shown_image=cv::Vec3b(255,255,255);
         drawPoints(shown_image, img_points, cv::Scalar(255,0,0),3);
@@ -47,4 +47,6 @@ int main (int argc, char** argv){
         Eigen::Isometry3f current_pose=cam.worldInCameraPose();
         key=cv::waitKey(0);
     }
+    for (int i=0; i< num_projected_points; i++)
+        cout << img_points[i] << endl;
 }
