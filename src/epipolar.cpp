@@ -48,7 +48,7 @@ namespace pr{
         dir_mat_t=dir_mat.transpose();
         s=-(dir_mat_t*dir_mat).inverse()*(dir_mat_t*o2);
         if (s(0)<0 || s(1)<0){
-            cerr << "Point behind one of the two cameras" << endl;
+            // cerr << "Point behind one of the two cameras" << endl;
             return false;
         }
         triangulated_p1=d1*s(0);
@@ -121,8 +121,6 @@ namespace pr{
         }
         skew_t1=R1*E;
         skew_t2=R2*E;
-        std::cout << skew_t1 << std::endl;
-        std::cout << skew_t2 << std::endl;
         X1.linear()=R1;
         X1.translation() << skew_t1(2,1)-skew_t1(1,2),
                             skew_t1(0,2)-skew_t1(2,0),
@@ -140,11 +138,119 @@ namespace pr{
         Eigen::Vector3f t;
         R=X.linear();
         t=X.translation();
-        skew_t << 0, -t(2), t(1),
-                  t(2), 0, -t(0),
-                  -t(1), t(0), 0;
+        skew_t=skew(t);
         return R.transpose()*skew_t;
     }
 
+    void fundamental2transform(const Eigen::Matrix3f& K,
+                               const Eigen::Matrix3f& F,
+                               Eigen::Isometry3f& X1,
+                               Eigen::Isometry3f& X2){
+        Eigen::Matrix3f E;
+        E=K.transpose()*F*K;
+        essential2transform(E,X1,X2);
+    }
 
+    const Eigen::Matrix3f transform2fundamental(const Eigen::Matrix3f& K,
+                                                const Eigen::Isometry3f& X){
+        Eigen::Matrix3f iK=K.inverse();
+        return iK.transpose()*transform2essential(X)*iK;
+    }
+
+    const Eigen::Matrix3f normTransform(const Vec2fVector& img_points){
+        Eigen::Matrix3f T;
+        T.setZero();
+        float x_max,y_max;
+        x_max=img_points[0].x();
+        y_max=img_points[0].y();
+        for (size_t i=1; i<img_points.size();i++){
+            if (img_points[i].x()>x_max)
+                x_max=img_points[i].x();
+            if (img_points[i].y()>y_max)
+                y_max=img_points[i].y();
+        }
+        T << 2/x_max, 0, -1,
+             0, -2/y_max, 1,
+             0, 0, 1;
+        return T;
+    }
+
+    const Eigen::Matrix3f estimateFundamental(const Vec2fVector& img1_points,
+                                              const Vec2fVector& img2_points){
+        size_t n_points=img1_points.size();
+        Eigen::Matrix<float, 9, 9> H;
+        H.setZero();
+        Eigen::Matrix3f tmp_mat,Fa,F,sing_values,T1,T2;
+        Vector9f A,eig_vec;
+        Eigen::Vector3f img1_3dpoint,img2_3dpoint;
+        T1=normTransform(img1_points);
+        T2=normTransform(img2_points);
+        for (size_t i=0; i<n_points; i++){
+            img1_3dpoint << img1_points[i].x(), img1_points[i].y(), 1;
+            img2_3dpoint << img2_points[i].x(), img2_points[i].y(), 1;
+            tmp_mat=(T1*img1_3dpoint)*(T2*img2_3dpoint).transpose();
+            A << tmp_mat(0,0), tmp_mat(1,0), tmp_mat(2,0),
+                 tmp_mat(0,1), tmp_mat(1,1), tmp_mat(2,1),
+                 tmp_mat(0,2), tmp_mat(1,2), tmp_mat(2,2);
+            H+=A*A.transpose();
+        }
+        eig_vec=smallestEigenVector(H);
+        Fa << eig_vec(0), eig_vec(3), eig_vec(6),
+              eig_vec(1), eig_vec(4), eig_vec(7),
+              eig_vec(2), eig_vec(5), eig_vec(8);
+        Fa=T1.transpose()*Fa*T2;
+        Eigen::JacobiSVD<Eigen::Matrix3f> svd(Fa, Eigen::ComputeFullU | Eigen::ComputeFullV);
+        sing_values=svd.singularValues().asDiagonal();
+        sing_values(2,2)=0;
+        F=svd.matrixU()*sing_values*svd.matrixV().transpose();
+
+        return F;
+    }
+
+    const Eigen::Isometry3f estimateTransform(const Eigen::Matrix3f& K,
+                                              const Vec2fVector& img1_points,
+                                              const Vec2fVector& img2_points){
+        Eigen::Matrix3f F;
+        Eigen::Isometry3f X1,X2,X_tmp,X;
+        Vec3fVector points;
+        std::vector<float> errors;
+        int num_points=0;
+        int num_points_tmp=0;
+        F=estimateFundamental(img1_points,img2_points);
+        fundamental2transform(K,F,X1,X2);
+        X=X1;
+        X_tmp=X1;
+        num_points_tmp=triangulatePoints(K,X_tmp,
+                                        img1_points,img2_points,
+                                        points,errors);
+        if (num_points_tmp>num_points){
+            num_points=num_points_tmp;
+            X=X_tmp;
+        }
+        X_tmp.translation()=-X_tmp.translation();
+        num_points_tmp=triangulatePoints(K,X_tmp,
+                                        img1_points,img2_points,
+                                        points,errors);
+        if (num_points_tmp>num_points){
+            num_points=num_points_tmp;
+            X=X_tmp;
+        }
+        X_tmp=X2;
+        num_points_tmp=triangulatePoints(K,X_tmp,
+                                        img1_points,img2_points,
+                                        points,errors);
+        if (num_points_tmp>num_points){
+            num_points=num_points_tmp;
+            X=X_tmp;
+        }
+        X_tmp.translation()=-X_tmp.translation();
+        num_points_tmp=triangulatePoints(K,X_tmp,
+                                        img1_points,img2_points,
+                                        points,errors);
+        if (num_points_tmp>num_points){
+            num_points=num_points_tmp;
+            X=X_tmp;
+        }
+        return X;
+    }
 }

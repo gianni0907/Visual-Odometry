@@ -29,10 +29,29 @@ namespace pr{
                            Vec3fVector& points,
                            std::vector<float>& errors);
 
-
     void essential2transform(const Eigen::Matrix3f& E,
                              Eigen::Isometry3f& X1,
                              Eigen::Isometry3f& X2);
 
     const Eigen::Matrix3f transform2essential(const Eigen::Isometry3f& X);
+
+    void fundamental2transform(const Eigen::Matrix3f& K,
+                               const Eigen::Matrix3f& F,
+                               Eigen::Isometry3f& X1,
+                               Eigen::Isometry3f& X2);
+
+    const Eigen::Matrix3f transform2fundamental(const Eigen::Matrix3f& K,
+                                                const Eigen::Isometry3f& X);
+
+    //return a 3x3 transformation matrix to normalize coordinates in [-1;1]
+    const Eigen::Matrix3f normTransform(const Vec2fVector& img_points);
+
+    //estimates the fundamental matrix given known correspondences of points
+    //using 8-points algorithm
+    const Eigen::Matrix3f estimateFundamental(const Vec2fVector& img1_points,
+                                              const Vec2fVector& img2_points);
+
+    const Eigen::Isometry3f estimateTransform(const Eigen::Matrix3f& K,
+                                              const Vec2fVector& img1_points,
+                                              const Vec2fVector& img2_points);
 }
