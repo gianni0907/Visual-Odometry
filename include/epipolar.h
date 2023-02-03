@@ -18,6 +18,7 @@ namespace pr{
                           const Eigen::Vector3f& d2,
                           Eigen::Vector3f& point,
                           float& error);
+
     //triangulates a set of points
     //given the projection of the points in two images
     //relative transformation is the pose of the world wrt 2nd camera
@@ -51,6 +52,7 @@ namespace pr{
     const Eigen::Matrix3f estimateFundamental(const Vec2fVector& img1_points,
                                               const Vec2fVector& img2_points);
 
+    //estimates the relative transformation between two cameras given known correspondences of points
     const Eigen::Isometry3f estimateTransform(const Eigen::Matrix3f& K,
                                               const Vec2fVector& img1_points,
                                               const Vec2fVector& img2_points);
