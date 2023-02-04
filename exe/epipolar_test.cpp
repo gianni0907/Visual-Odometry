@@ -18,6 +18,7 @@ int main(int argc, char** argv){
     int num_projected_points2=0;
     int num_matching_points=0;
     int num_triangulated_points=0;
+    const bool keep_indices=false;
 
     //create points in the world
     makeWorld(world_points,
@@ -29,8 +30,8 @@ int main(int argc, char** argv){
 
     //Consider an homogeneous transformation expressing the cam1(world) wrt cam2
     Eigen::Isometry3f relative_X=Eigen::Isometry3f::Identity();
-    relative_X.linear()=Rz(0.05);
-    relative_X.translation()=Eigen::Vector3f(-1.5f, -1.5f, 0.0f);
+    relative_X.linear()=Rz(0.15);
+    relative_X.translation()=Eigen::Vector3f(-2.0f, 1.5f, 0.0f);
     cout << "Ground truth transformation:" << endl;
     cout << relative_X.linear() << endl << relative_X.translation() << endl;
     cout << endl;
@@ -54,8 +55,8 @@ int main(int argc, char** argv){
     char key=0;
     const char ESC_key=27;
     while (key!=ESC_key){
-        num_projected_points1=cam1.projectPoints(img1_points, world_points, true);
-        num_projected_points2=cam2.projectPoints(img2_points, world_points, true);
+        num_projected_points1=cam1.projectPoints(img1_points, world_points, keep_indices);
+        num_projected_points2=cam2.projectPoints(img2_points, world_points, keep_indices);
         cout << "Number of projected points on img1: " << num_projected_points1 << endl;
         cout << "Number of projected points on img2: " << num_projected_points2 << endl;        
         RGBImage shown_image1(height,width);
@@ -85,7 +86,7 @@ int main(int argc, char** argv){
     cout << "Number of triangulated points: " << num_triangulated_points << endl;
     key=0;
     while (key!=ESC_key){
-        cam1.projectPoints(img1_points, triangulated_world_points, true);
+        cam1.projectPoints(img1_points, triangulated_world_points, keep_indices);
         RGBImage shown_image3(height,width);
         shown_image3=cv::Vec3b(255,255,255);
         drawPoints(shown_image3, img1_points, cv::Scalar(255,0,0),3);

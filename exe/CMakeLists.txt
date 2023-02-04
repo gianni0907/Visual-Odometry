@@ -19,6 +19,7 @@ target_link_libraries(epipolar_test opencv_highgui)
 add_executable(picp_test picp_test.cpp
     ../src/points_utils.cpp
     ../src/camera.cpp
+    ../src/epipolar.cpp
     ../src/projective_icp.cpp
 )
 target_link_libraries(picp_test opencv_highgui)

@@ -3,24 +3,61 @@
 namespace pr{
     using namespace std;
 
+    void computeImg2ImgCorrespondences(IntPairVector& correspondences,
+				                       const Points2dVector& img1_points,
+				                       const Points2dVector& img2_points){
+        correspondences.resize(min(img1_points.size(),img2_points.size()));
+        int num_correspondences=0;
+        Point2d reference_point,current_point;
+        for (size_t i=0; i<img1_points.size(); i++){
+            reference_point=img1_points[i];
+            for (size_t j=0; j<img2_points.size();j++){
+                current_point=img2_points[j];
+                if (reference_point.id==current_point.id && !(reference_point.p.x()<0 || current_point.p.x()<0)){
+                    correspondences[num_correspondences].first=i;
+                    correspondences[num_correspondences].second=j;
+                    num_correspondences++;
+                    break;
+                }
+            }
+        }
+        correspondences.resize(num_correspondences);
+    }
+
+    void computeWrld2ImgCorrespondences(IntPairVector& correspondences,
+				                        const Points3dVector& world_points,
+				                        const Points2dVector& img_points){
+        correspondences.resize(min(img_points.size(),world_points.size()));
+        int num_correspondences=0;
+        Point2d img_point;
+        Point3d world_point;
+        for (size_t i=0; i<img_points.size(); i++){
+            img_point=img_points[i];
+            for (size_t j=0; j<world_points.size();j++){
+                world_point=world_points[j];
+                if (img_point.id==world_point.id && !(img_point.p.x()<0)){
+                    correspondences[num_correspondences].first=j;
+                    correspondences[num_correspondences].second=i;
+                    num_correspondences++;
+                }
+            }
+        }
+        correspondences.resize(num_correspondences);
+    }
+
     int pruneUnmatchingProjectedPoints(const Points2dVector& img1_points,
                                        const Points2dVector& img2_points,
                                        Points2dVector& img1_matching_points,
                                        Points2dVector& img2_matching_points){
-        if (img1_points.size() != img2_points.size()){
-            cout << "Different number of points in the two images" << endl;
-            return -1;
-        }
         int num_matching_points=0;
-        img1_matching_points.resize(img1_points.size());
-        img2_matching_points.resize(img2_points.size());
-        const Eigen::Vector2f point_outside(-1,-1);
-        for(size_t i=0; i<img1_points.size(); i++){
-            if(img1_points[i].p!=point_outside && img2_points[i].p!=point_outside){
-                img1_matching_points[num_matching_points]=img1_points[i];
-                img2_matching_points[num_matching_points]=img2_points[i];
-                num_matching_points++;
-            }
+        IntPairVector correspondences;
+        computeImg2ImgCorrespondences(correspondences,img1_points,img2_points);
+        img1_matching_points.resize(min(img1_points.size(),img2_points.size()));
+        img2_matching_points.resize(min(img1_points.size(),img2_points.size()));
+        for(size_t i=0; i<correspondences.size(); i++){
+            img1_matching_points[num_matching_points]=img1_points[correspondences[i].first];
+            img2_matching_points[num_matching_points]=img2_points[correspondences[i].second];
+            num_matching_points++;
         }
         img1_matching_points.resize(num_matching_points);
         img2_matching_points.resize(num_matching_points);

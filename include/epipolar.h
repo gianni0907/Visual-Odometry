@@ -2,6 +2,18 @@
 #include "defs.h"
 
 namespace pr{
+    //given two set of image points, returns the set of correspondences
+    //between the points on images representing th esame point in world
+    void computeImg2ImgCorrespondences(IntPairVector& correspondences,
+				                       const Points2dVector& img1_points,
+				                       const Points2dVector& img2_points);
+
+    //given a set of world point and a set of points in image, returns the
+    //set of correspondences between points on image and points in world
+    void computeWrld2ImgCorrespondences(IntPairVector& correspondences,
+				                        const Points3dVector& world_points,
+				                        const Points2dVector& img_points);
+
     //given two images, returns on each image only the points present on both images
     //assuming correspondences between points with same index in the two images
     //return number of matching points
@@ -24,11 +36,11 @@ namespace pr{
     //relative transformation is the pose of the world wrt 2nd camera
     //return the number of trinagulated points
     int triangulatePoints(const Eigen::Matrix3f& K,
-                           const Eigen::Isometry3f& X,
-                           const Points2dVector& img1_points,
-                           const Points2dVector& img2_points,
-                           Points3dVector& points,
-                           std::vector<float>& errors);
+                          const Eigen::Isometry3f& X,
+                          const Points2dVector& img1_points,
+                          const Points2dVector& img2_points,
+                          Points3dVector& points,
+                          std::vector<float>& errors);
 
     void essential2transform(const Eigen::Matrix3f& E,
                              Eigen::Isometry3f& X1,

@@ -59,8 +59,8 @@ namespace pr {
     for (const IntPair& correspondence: correspondences){
       Eigen::Vector2f e;
       Matrix2_6f J;
-      int ref_idx=correspondence.first;
-      int curr_idx=correspondence.second;
+      int ref_idx=correspondence.second;
+      int curr_idx=correspondence.first;
       bool inside=errorAndJacobian(e,
                                    J,
                                    (*_world_points)[curr_idx].p,
