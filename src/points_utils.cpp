@@ -33,4 +33,20 @@ namespace pr {
             cv::circle(img, cv::Point(c,r), radius, color);
         }
     }
+    void drawCorrespondences(RGBImage& img,
+                             const Vec2fVector& reference_image_points,
+                             const Vec2fVector& current_image_points,
+                             const IntPairVector& correspondences,
+                             cv::Scalar color){
+        for (const IntPair& correspondence: correspondences){
+            int ref_idx=correspondence.first;
+            int curr_idx=correspondence.second;
+            const Eigen::Vector2f& reference_point=reference_image_points[ref_idx];
+            const Eigen::Vector2f& current_point=current_image_points[curr_idx];
+            cv::line(img, 
+                     cv::Point(reference_point.x(), reference_point.y()),
+                     cv::Point(current_point.x(), current_point.y()),
+                     color);
+        }
+    }
 }

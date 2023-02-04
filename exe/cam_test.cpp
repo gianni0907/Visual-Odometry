@@ -49,4 +49,6 @@ int main (int argc, char** argv){
     }
     for (int i=0; i< num_projected_points; i++)
         cout << img_points[i] << endl;
+
+    return 0;
 }

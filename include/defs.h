@@ -16,8 +16,16 @@ namespace pr {
     typedef Eigen::Matrix<float, 9, 1> Vector9f;
     typedef Eigen::Matrix<float, 3, 2> Matrix3_2f;
     typedef Eigen::Matrix<float, 2, 3> Matrix2_3f;
+    typedef Eigen::Matrix<float, 3, 6> Matrix3_6f;
+    typedef Eigen::Matrix<float, 2, 6> Matrix2_6f;
+
+    typedef Eigen::Matrix<float, 6, 6> Matrix6f;
+    typedef Eigen::Matrix<float, 6, 1> Vector6f;
 
     typedef cv::Mat_< cv::Vec3b > RGBImage;
+
+    typedef std::pair<int,int> IntPair;
+    typedef std::vector<IntPair > IntPairVector;
 
     // compute the smallest eigenvector of a 9x9 matrix              
     template <typename SquareMatrixType_>
@@ -65,6 +73,12 @@ namespace pr {
              s,  c,  0,
              0,  0,  1;
         return R;
+    }
+    inline Eigen::Isometry3f v2tEuler(const Vector6f& v){
+        Eigen::Isometry3f T;
+        T.linear()=Rx(v[3])*Ry(v[4])*Rz(v[5]);
+        T.translation()=v.head<3>();
+        return T;
     }
 }
 

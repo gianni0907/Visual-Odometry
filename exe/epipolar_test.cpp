@@ -153,9 +153,10 @@ int main(int argc, char** argv){
     cout << X_est.linear() << endl << X_est.translation() << endl;
     cout << endl;
     cout << "Ground truth/estimated transformation ratio:" << endl;
-    for (int i=0;i<4;i++){
+    for (int i=0;i<3;i++){
         for (int j=0;j<4;j++)
             cout << relative_X(i,j)/X_est(i,j) << " ";
         cout << endl;
     }
+    return 0;
 }

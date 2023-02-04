@@ -8,10 +8,19 @@ add_executable(cam_test cam_test.cpp
 )
 target_link_libraries(cam_test opencv_highgui)
 
-#ds epipolar_test: test triangulation and essential extraction
+#ds epipolar_test: test triangulation,fundamental estimation, transform estimation
 add_executable(epipolar_test epipolar_test.cpp
     ../src/points_utils.cpp
     ../src/camera.cpp
     ../src/epipolar.cpp
 )
 target_link_libraries(epipolar_test opencv_highgui)
+
+#ds picp_test: test projective_icp solver
+add_executable(picp_test picp_test.cpp
+    ../src/points_utils.cpp
+    ../src/camera.cpp
+    ../src/epipolar.cpp
+    ../src/projective_icp.cpp
+)
+target_link_libraries(picp_test opencv_highgui)
