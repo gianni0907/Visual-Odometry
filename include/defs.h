@@ -10,10 +10,8 @@
 #include <unistd.h>
 
 namespace pr {
-    typedef std::vector<Eigen::Vector3f, Eigen::aligned_allocator<Eigen::Vector3f>> Vec3fVector;
-    typedef std::vector<Eigen::Vector2f, Eigen::aligned_allocator<Eigen::Vector2f>> Vec2fVector;
-
     typedef Eigen::Matrix<float, 9, 1> Vector9f;
+    typedef Eigen::Matrix<float, 10, 1> Vector10f;
     typedef Eigen::Matrix<float, 3, 2> Matrix3_2f;
     typedef Eigen::Matrix<float, 2, 3> Matrix2_3f;
     typedef Eigen::Matrix<float, 3, 6> Matrix3_6f;
@@ -27,7 +25,28 @@ namespace pr {
     typedef std::pair<int,int> IntPair;
     typedef std::vector<IntPair > IntPairVector;
 
-    // compute the smallest eigenvector of a 9x9 matrix              
+    typedef struct{
+        int id;
+        Eigen::Vector3f p;
+        Vector10f appearance;
+    } Point3d;
+
+    typedef struct{
+        int id;
+        Eigen::Vector2f p;
+        Vector10f appearance;
+    } Point2d;
+
+    typedef std::vector<Point2d> Points2dVector;
+    typedef std::vector<Point3d> Points3dVector;
+    
+    typedef struct{
+        Eigen::Isometry3f gt_pose;
+        Eigen::Isometry3f odom_pose;
+        Points2dVector points;
+    } Meas;
+        
+            
     template <typename SquareMatrixType_>
     inline Eigen::Matrix<typename SquareMatrixType_::Scalar,
                   SquareMatrixType_::RowsAtCompileTime, 1>

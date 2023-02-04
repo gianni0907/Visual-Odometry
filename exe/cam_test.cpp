@@ -6,21 +6,20 @@ using namespace pr;
 
 int main (int argc, char** argv){
     
-    // generate 3d points in the world
-    Vec3fVector world_points;
-    Vec2fVector img_points;
+    Points3dVector world_points;
+    Points2dVector img_points;
+    int num_points=1000;
     Eigen::Vector3f lower_left_bottom(-10,-10,-10);
     Eigen::Vector3f upper_right_top(10,10,10);
-    int num_points=100;
     int num_projected_points=0;
+
+    // generate 3d points in the world
     makeWorld(world_points,
               lower_left_bottom,
               upper_right_top,
               num_points);
 
     cout << "Generated model with " << world_points.size() << " points" << endl;
-
-
 
     // instantiate the camera
     Eigen::Matrix3f camera_matrix;
@@ -48,7 +47,7 @@ int main (int argc, char** argv){
         key=cv::waitKey(0);
     }
     for (int i=0; i< num_projected_points; i++)
-        cout << img_points[i] << endl;
+        cout << img_points[i].p << endl;
 
     return 0;
 }

@@ -31,8 +31,8 @@ namespace pr {
         }    
 
         // project the world points on the image plane
-        int projectPoints(Vec2fVector& img_points,
-                          const Vec3fVector& world_points,
+        int projectPoints(Points2dVector& img_points,
+                          const Points3dVector& world_points,
                           bool keep_indices=false);
 
         inline const Eigen::Isometry3f& worldInCameraPose() const {return _world_in_cam_pose;}
@@ -40,8 +40,8 @@ namespace pr {
         inline const Eigen::Matrix3f& cameraMatrix() const {return _camera_matrix;}
 
     protected:
-        int _width;
         int _height;
+        int _width;
         float _z_near;
         float _z_far;
         Eigen::Isometry3f _world_in_cam_pose;
