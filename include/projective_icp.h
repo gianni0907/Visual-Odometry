@@ -29,8 +29,8 @@ namespace pr {
     //! @param world_points: the points of the world
     //! @param image_points: the points of the reference
     void init(const Camera& camera,
-	      const Vec3fVector& world_points,
-	      const Vec2fVector& image_points);
+	            const Points3dVector& world_points,
+	            const Points2dVector& image_points);
   
     inline float kernelThreshold() const {return _kernel_thereshold;}
 
@@ -71,8 +71,8 @@ namespace pr {
     float _kernel_thereshold;        //< threshold for the kernel
     float _damping;                  //< damping, to slow the solution
     int _min_num_inliers;            //< if less inliers than this value, the solver stops
-    const Vec3fVector* _world_points;
-    const Vec2fVector* _reference_image_points;
+    const Points3dVector* _world_points;
+    const Points2dVector* _reference_image_points;
     Matrix6f _H;
     Vector6f _b;
     float _chi_inliers;

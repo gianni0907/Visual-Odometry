@@ -15,11 +15,10 @@ add_executable(epipolar_test epipolar_test.cpp
 )
 target_link_libraries(epipolar_test opencv_highgui)
 
-# #ds picp_test: test projective_icp solver
-# add_executable(picp_test picp_test.cpp
-#     ../src/points_utils.cpp
-#     ../src/camera.cpp
-#     ../src/epipolar.cpp
-#     ../src/projective_icp.cpp
-# )
-# target_link_libraries(picp_test opencv_highgui)
+#ds picp_test: test projective_icp solver
+add_executable(picp_test picp_test.cpp
+    ../src/points_utils.cpp
+    ../src/camera.cpp
+    ../src/projective_icp.cpp
+)
+target_link_libraries(picp_test opencv_highgui)

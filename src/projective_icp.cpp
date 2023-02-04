@@ -12,8 +12,8 @@ namespace pr {
   }
 
   void PICPSolver::init(const Camera& camera_,
-                        const Vec3fVector& world_points,
-                        const Vec2fVector& reference_image_points){
+                        const Points3dVector& world_points,
+                        const Points2dVector& reference_image_points){
     _camera=camera_;
     _world_points=&world_points;
     _reference_image_points=&reference_image_points;
@@ -63,8 +63,8 @@ namespace pr {
       int curr_idx=correspondence.second;
       bool inside=errorAndJacobian(e,
                                    J,
-                                   (*_world_points)[curr_idx],
-                                   (*_reference_image_points)[ref_idx]);
+                                   (*_world_points)[curr_idx].p,
+                                   (*_reference_image_points)[ref_idx].p);
       if (! inside)
         continue;
 

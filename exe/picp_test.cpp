@@ -7,15 +7,15 @@ using namespace std;
 using namespace pr;
 
 void computeFakeCorrespondences(IntPairVector& correspondences,
-				                const Vec2fVector reference_image_points,
-				                const Vec2fVector current_image_points){
+				                const Points2dVector reference_image_points,
+				                const Points2dVector current_image_points){
   correspondences.resize(current_image_points.size());
   int num_correspondences=0;
   assert(reference_image_points.size()==current_image_points.size());
   
   for (size_t i=0; i<reference_image_points.size(); i++){
-    const Eigen::Vector2f& reference_point=reference_image_points[i];
-    const Eigen::Vector2f& current_point=current_image_points[i];
+    const Eigen::Vector2f& reference_point=reference_image_points[i].p;
+    const Eigen::Vector2f& current_point=current_image_points[i].p;
     IntPair& correspondence=correspondences[num_correspondences];
     if (reference_point.x()<0 || current_point.x()<0)
       continue;
@@ -27,8 +27,8 @@ void computeFakeCorrespondences(IntPairVector& correspondences,
 
 int main (int argc, char** argv) {
 
-  Vec3fVector world_points;
-  Vec2fVector reference_image_points,current_image_points;
+  Points3dVector world_points;
+  Points2dVector reference_image_points,current_image_points;
   Eigen::Vector3f lower_left_bottom(-10,-10,-10);
   Eigen::Vector3f upper_right_top(10,10,10);
   int num_points=1000;
