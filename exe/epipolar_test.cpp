@@ -7,10 +7,10 @@ using namespace pr;
 
 int main(int argc, char** argv){
 
-    Vec3fVector world_points,triangulated_world_points;
+    Points3dVector world_points,triangulated_world_points;
     vector<float> errors;
-    Vec2fVector img1_points, img2_points;
-    Vec2fVector img1_matching_points, img2_matching_points;
+    Points2dVector img1_points, img2_points;
+    Points2dVector img1_matching_points, img2_matching_points;
     Eigen::Vector3f lower_left_bottom(-10,-10,-10);
     Eigen::Vector3f upper_right_top(10,10,10);
     int num_points=1000;
@@ -31,8 +31,9 @@ int main(int argc, char** argv){
     Eigen::Isometry3f relative_X=Eigen::Isometry3f::Identity();
     relative_X.linear()=Rz(0.05);
     relative_X.translation()=Eigen::Vector3f(-1.5f, -1.5f, 0.0f);
-    cout << relative_X.linear() << endl;
-    cout << relative_X.translation() << endl;
+    cout << "Ground truth transformation:" << endl;
+    cout << relative_X.linear() << endl << relative_X.translation() << endl;
+    cout << endl;
     
     // set the camera parameters
     Eigen::Matrix3f camera_matrix;

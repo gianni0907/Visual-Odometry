@@ -5,10 +5,10 @@ namespace pr{
     //given two images, returns on each image only the points present on both images
     //assuming correspondences between points with same index in the two images
     //return number of matching points
-    int pruneUnmatchingProjectedPoints(const Vec2fVector& img1_points,
-                                       const Vec2fVector& img2_points,
-                                       Vec2fVector& img1_matching_points,
-                                       Vec2fVector& img2_matching_points);
+    int pruneUnmatchingProjectedPoints(const Points2dVector& img1_points,
+                                       const Points2dVector& img2_points,
+                                       Points2dVector& img1_matching_points,
+                                       Points2dVector& img2_matching_points);
 
     //triangulates a point given two lines
     //one passing through the origin, with direction d1
@@ -25,9 +25,9 @@ namespace pr{
     //return the number of trinagulated points
     int triangulatePoints(const Eigen::Matrix3f& K,
                            const Eigen::Isometry3f& X,
-                           const Vec2fVector& img1_points,
-                           const Vec2fVector& img2_points,
-                           Vec3fVector& points,
+                           const Points2dVector& img1_points,
+                           const Points2dVector& img2_points,
+                           Points3dVector& points,
                            std::vector<float>& errors);
 
     void essential2transform(const Eigen::Matrix3f& E,
@@ -45,15 +45,15 @@ namespace pr{
                                                 const Eigen::Isometry3f& X);
 
     //return a 3x3 transformation matrix to normalize coordinates in [-1;1]
-    const Eigen::Matrix3f normTransform(const Vec2fVector& img_points);
+    const Eigen::Matrix3f normTransform(const Points2dVector& img_points);
 
     //estimates the fundamental matrix given known correspondences of points
     //using 8-points algorithm
-    const Eigen::Matrix3f estimateFundamental(const Vec2fVector& img1_points,
-                                              const Vec2fVector& img2_points);
+    const Eigen::Matrix3f estimateFundamental(const Points2dVector& img1_points,
+                                              const Points2dVector& img2_points);
 
     //estimates the relative transformation between two cameras given known correspondences of points
     const Eigen::Isometry3f estimateTransform(const Eigen::Matrix3f& K,
-                                              const Vec2fVector& img1_points,
-                                              const Vec2fVector& img2_points);
+                                              const Points2dVector& img1_points,
+                                              const Points2dVector& img2_points);
 }

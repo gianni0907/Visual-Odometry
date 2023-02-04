@@ -3,16 +3,10 @@
 namespace pr{
     using namespace std;
 
-    /// @brief 
-    /// @param img1_points 
-    /// @param img2_points 
-    /// @param img1_matching_points 
-    /// @param img2_matching_points 
-    /// @return 
-    int pruneUnmatchingProjectedPoints(const Vec2fVector& img1_points,
-                                       const Vec2fVector& img2_points,
-                                       Vec2fVector& img1_matching_points,
-                                       Vec2fVector& img2_matching_points){
+    int pruneUnmatchingProjectedPoints(const Points2dVector& img1_points,
+                                       const Points2dVector& img2_points,
+                                       Points2dVector& img1_matching_points,
+                                       Points2dVector& img2_matching_points){
         if (img1_points.size() != img2_points.size()){
             cout << "Different number of points in the two images" << endl;
             return -1;
@@ -22,9 +16,9 @@ namespace pr{
         img2_matching_points.resize(img2_points.size());
         const Eigen::Vector2f point_outside(-1,-1);
         for(size_t i=0; i<img1_points.size(); i++){
-            if(img1_points[i].x()>0 && img2_points[i].x()>0 && img1_points[i].y()>0 && img2_points[i].y()>0){
-                img1_matching_points[num_matching_points] << img1_points[i].x(),img1_points[i].y();
-                img2_matching_points[num_matching_points] << img2_points[i].x(),img2_points[i].y();
+            if(img1_points[i].p!=point_outside && img2_points[i].p!=point_outside){
+                img1_matching_points[num_matching_points]=img1_points[i];
+                img2_matching_points[num_matching_points]=img2_points[i];
                 num_matching_points++;
             }
         }
@@ -60,15 +54,15 @@ namespace pr{
 
     int triangulatePoints(const Eigen::Matrix3f& K,
                            const Eigen::Isometry3f& X,
-                           const Vec2fVector& img1_points,
-                           const Vec2fVector& img2_points,
-                           Vec3fVector& points,
+                           const Points2dVector& img1_points,
+                           const Points2dVector& img2_points,
+                           Points3dVector& points,
                            std::vector<float>& errors){
         Eigen::Isometry3f iX=X.inverse();
         Eigen::Matrix3f iK=K.inverse();
         Eigen::Matrix3f iRiK=iX.linear()*iK;
         Eigen::Vector3f o2=iX.translation();
-        Vec2fVector img1_matching_points,img2_matching_points;
+        Points2dVector img1_matching_points,img2_matching_points;
         Eigen::Vector3f p1_cam,p2_cam,img1_3dpoint,img2_3dpoint;
         int num_success=0;
         bool success=false;
@@ -86,17 +80,20 @@ namespace pr{
         //express the points in the 1st camera coordinates (i.e. the world)
         //and apply the triangulation
         for (size_t i=0; i<img1_matching_points.size(); i++){         
-            img1_3dpoint << img1_matching_points[i].x(),
-                            img1_matching_points[i].y(),
+            img1_3dpoint << img1_matching_points[i].p.x(),
+                            img1_matching_points[i].p.y(),
                             1;
-            img2_3dpoint << img2_matching_points[i].x(),
-                            img2_matching_points[i].y(),
+            img2_3dpoint << img2_matching_points[i].p.x(),
+                            img2_matching_points[i].p.y(),
                             1;
             p1_cam=iK*img1_3dpoint;
             p2_cam=iRiK*img2_3dpoint;
-            success=triangulatePoint(o2,p1_cam,p2_cam,points[num_success],errors[num_success]);
-            if (success)
+            success=triangulatePoint(o2,p1_cam,p2_cam,points[num_success].p,errors[num_success]);
+            if (success){
+                points[num_success].id=img1_matching_points[i].id;
+                points[num_success].appearance=img1_matching_points[i].appearance;
                 num_success++;
+            }
         }
         points.resize(num_success);
         errors.resize(num_success);
@@ -157,17 +154,17 @@ namespace pr{
         return iK.transpose()*transform2essential(X)*iK;
     }
 
-    const Eigen::Matrix3f normTransform(const Vec2fVector& img_points){
+    const Eigen::Matrix3f normTransform(const Points2dVector& img_points){
         Eigen::Matrix3f T;
         T.setZero();
         float x_max,y_max;
-        x_max=img_points[0].x();
-        y_max=img_points[0].y();
+        x_max=img_points[0].p.x();
+        y_max=img_points[0].p.y();
         for (size_t i=1; i<img_points.size();i++){
-            if (img_points[i].x()>x_max)
-                x_max=img_points[i].x();
-            if (img_points[i].y()>y_max)
-                y_max=img_points[i].y();
+            if (img_points[i].p.x()>x_max)
+                x_max=img_points[i].p.x();
+            if (img_points[i].p.y()>y_max)
+                y_max=img_points[i].p.y();
         }
         T << 2/x_max, 0, -1,
              0, -2/y_max, 1,
@@ -175,8 +172,8 @@ namespace pr{
         return T;
     }
 
-    const Eigen::Matrix3f estimateFundamental(const Vec2fVector& img1_points,
-                                              const Vec2fVector& img2_points){
+    const Eigen::Matrix3f estimateFundamental(const Points2dVector& img1_points,
+                                              const Points2dVector& img2_points){
         size_t n_points=img1_points.size();
         Eigen::Matrix<float, 9, 9> H;
         H.setZero();
@@ -186,8 +183,8 @@ namespace pr{
         T1=normTransform(img1_points);
         T2=normTransform(img2_points);
         for (size_t i=0; i<n_points; i++){
-            img1_3dpoint << img1_points[i].x(), img1_points[i].y(), 1;
-            img2_3dpoint << img2_points[i].x(), img2_points[i].y(), 1;
+            img1_3dpoint << img1_points[i].p.x(), img1_points[i].p.y(), 1;
+            img2_3dpoint << img2_points[i].p.x(), img2_points[i].p.y(), 1;
             tmp_mat=(T1*img1_3dpoint)*(T2*img2_3dpoint).transpose();
             A << tmp_mat(0,0), tmp_mat(1,0), tmp_mat(2,0),
                  tmp_mat(0,1), tmp_mat(1,1), tmp_mat(2,1),
@@ -208,11 +205,11 @@ namespace pr{
     }
 
     const Eigen::Isometry3f estimateTransform(const Eigen::Matrix3f& K,
-                                              const Vec2fVector& img1_points,
-                                              const Vec2fVector& img2_points){
+                                              const Points2dVector& img1_points,
+                                              const Points2dVector& img2_points){
         Eigen::Matrix3f F;
         Eigen::Isometry3f X1,X2,X_tmp,X;
-        Vec3fVector points;
+        Points3dVector points;
         std::vector<float> errors;
         int num_points=0;
         int num_points_tmp=0;
