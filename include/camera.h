@@ -38,6 +38,11 @@ namespace pr {
         inline const Eigen::Isometry3f& worldInCameraPose() const {return _world_in_cam_pose;}
         inline void setWorldInCameraPose(const Eigen::Isometry3f& pose)  {_world_in_cam_pose=pose;}
         inline const Eigen::Matrix3f& cameraMatrix() const {return _camera_matrix;}
+        inline const Eigen::Vector2f getDimension() const {
+            Eigen::Vector2f dimension;
+            dimension << _height, _width;
+            return dimension;
+        }
 
     protected:
         int _height;

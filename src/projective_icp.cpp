@@ -13,12 +13,15 @@ namespace pr {
 
   void PICPSolver::init(const Camera& camera_,
                         const Points3dVector& world_points,
-                        const Points2dVector& reference_image_points){
+                        const Points2dVector& reference_image_points,
+                        const int& num_iterations,
+                        const bool& keep_indices){
     _camera=camera_;
     _world_points=&world_points;
     _reference_image_points=&reference_image_points;
+    _num_iterations=num_iterations;
+    _keep_indices=keep_indices;
   }
-  
 
   bool PICPSolver::errorAndJacobian(Eigen::Vector2f& error,
                                     Matrix2_6f& jacobian,
@@ -99,5 +102,31 @@ namespace pr {
     Vector6f dx = _H.ldlt().solve(-_b);
     _camera.setWorldInCameraPose(v2tEuler(dx)*_camera.worldInCameraPose());
     return true;
+  }
+
+  void PICPSolver::run(){
+    Points2dVector current_image_points;
+    IntPairVector imgs_correspondences, wrld_correspondences;
+    const Eigen::Vector2f dimension=_camera.getDimension();
+    int num_cur_img_points=0;
+    char key=0;
+    const char ESC_key=27;
+    for (int i=0; i<_num_iterations && key!=ESC_key; i++){
+    num_cur_img_points=_camera.projectPoints(current_image_points, *_world_points, _keep_indices);
+    computeImg2ImgCorrespondences(imgs_correspondences, *_reference_image_points, current_image_points);
+    computeWrld2ImgCorrespondences(wrld_correspondences, *_world_points, *_reference_image_points);
+    RGBImage shown_image(dimension(0),dimension(1));
+    shown_image=cv::Vec3b(255,255,255);
+    drawPoints(shown_image,*_reference_image_points,cv::Scalar(0,0,255),3);
+    drawPoints(shown_image,current_image_points,cv::Scalar(255,0,0),3);
+    drawCorrespondences(shown_image,
+		       *_reference_image_points,
+		       current_image_points,
+		       imgs_correspondences,
+		       cv::Scalar(0,255,0));
+    cv::imshow("picp_solver_test", shown_image);
+    key=cv::waitKey(2000);
+    oneRound(wrld_correspondences,false);
+    }
   }
 }

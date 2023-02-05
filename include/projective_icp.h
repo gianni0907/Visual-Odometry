@@ -1,6 +1,8 @@
 #pragma once
 #include "defs.h"
+#include "points_utils.h"
 #include "camera.h"
+#include "epipolar.h"
 
 namespace pr {
 
@@ -30,7 +32,9 @@ namespace pr {
     //! @param image_points: the points of the reference
     void init(const Camera& camera,
 	            const Points3dVector& world_points,
-	            const Points2dVector& image_points);
+	            const Points2dVector& image_points,
+              const int& num_iterations,
+              const bool& keep_indices);
   
     inline float kernelThreshold() const {return _kernel_thereshold;}
 
@@ -57,6 +61,8 @@ namespace pr {
     //! (but cut by the kernel)
     bool oneRound(const IntPairVector& correspondences, bool keep_outliers);
 
+    void run();
+
   protected:
 
     bool errorAndJacobian(Eigen::Vector2f& error,
@@ -78,6 +84,8 @@ namespace pr {
     float _chi_inliers;
     float _chi_outliers;
     int _num_inliers;
+    int _num_iterations;
+    bool _keep_indices;
   };
 
 }
