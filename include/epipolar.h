@@ -3,7 +3,7 @@
 
 namespace pr{
     //given two set of image points, returns the set of correspondences
-    //between the points on images representing th esame point in world
+    //between the points on images representing the same point in world
     void computeImg2ImgCorrespondences(IntPairVector& correspondences,
 				                       const Points2dVector& img1_points,
 				                       const Points2dVector& img2_points);
@@ -13,6 +13,12 @@ namespace pr{
     void computeWrld2ImgCorrespondences(IntPairVector& correspondences,
 				                        const Points3dVector& world_points,
 				                        const Points2dVector& img_points);
+
+    //given two set of world_points, returns the set of correspondences
+    //between the same points, identified by id
+    void computeWrld2WrldCorrespondences(IntPairVector& correspondences,
+				                         const Points3dVector& world1_points,
+				                         const Points3dVector& world2_points);
 
     //given two images, returns on each image only the points present on both images
     //assuming correspondences between points with same index in the two images
@@ -34,13 +40,18 @@ namespace pr{
     //triangulates a set of points
     //given the projection of the points in two images
     //relative transformation is the pose of the world wrt 2nd camera
-    //return the number of trinagulated points
+    //return the number of triangulated points
     int triangulatePoints(const Eigen::Matrix3f& K,
                           const Eigen::Isometry3f& X,
                           const Points2dVector& img1_points,
                           const Points2dVector& img2_points,
                           Points3dVector& points,
                           std::vector<float>& errors);
+
+    //merge two sets of world points
+    //taking the most recent for corresponding points
+    Points3dVector mergePoints(const Points3dVector& new_points,
+                               const Points3dVector& points);
 
     void essential2transform(const Eigen::Matrix3f& E,
                              Eigen::Isometry3f& X1,

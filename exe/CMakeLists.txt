@@ -23,3 +23,12 @@ add_executable(picp_test picp_test.cpp
     ../src/projective_icp.cpp
 )
 target_link_libraries(picp_test opencv_highgui)
+
+#ds complete_test: test triangulation for initialization and then picp
+add_executable(complete_test complete_test.cpp
+    ../src/points_utils.cpp
+    ../src/camera.cpp
+    ../src/epipolar.cpp
+    ../src/projective_icp.cpp
+)
+target_link_libraries(complete_test opencv_highgui)

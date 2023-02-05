@@ -125,7 +125,7 @@ namespace pr {
 		       imgs_correspondences,
 		       cv::Scalar(0,255,0));
     cv::imshow("picp_solver_test", shown_image);
-    key=cv::waitKey(2000);
+    key=cv::waitKey(600);
     oneRound(wrld_correspondences,false);
     }
   }

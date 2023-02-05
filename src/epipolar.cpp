@@ -45,6 +45,26 @@ namespace pr{
         correspondences.resize(num_correspondences);
     }
 
+    void computeWrld2WrldCorrespondences(IntPairVector& correspondences,
+				                         const Points3dVector& world1_points,
+				                         const Points3dVector& world2_points){
+        correspondences.resize(min(world1_points.size(),world2_points.size()));
+        int num_correspondences=0;
+        Point3d world1_point,world2_point;
+        for (size_t i=0; i<world1_points.size(); i++){
+            world1_point=world1_points[i];
+            for (size_t j=0; j<world2_points.size();j++){
+                world2_point=world2_points[j];
+                if (world1_point.id==world2_point.id){
+                    correspondences[num_correspondences].first=j;
+                    correspondences[num_correspondences].second=i;
+                    num_correspondences++;
+                }
+            }
+        }
+        correspondences.resize(num_correspondences);
+    }
+
     int pruneUnmatchingProjectedPoints(const Points2dVector& img1_points,
                                        const Points2dVector& img2_points,
                                        Points2dVector& img1_matching_points,
@@ -135,6 +155,29 @@ namespace pr{
         points.resize(num_success);
         errors.resize(num_success);
         return num_success;
+    }
+
+    Points3dVector mergePoints(const Points3dVector& new_points,
+                              const Points3dVector& points){
+        Points3dVector merged_points=new_points;
+        size_t num_points=merged_points.size();
+        merged_points.resize(new_points.size()+points.size());
+        bool in=false;
+        for (const Point3d& point: points){
+            in=false;
+            for (const Point3d& new_point: new_points){
+                if (point.id==new_point.id){
+                    in=true;
+                    break;
+                }
+            }
+            if (!in){
+                merged_points[num_points]=point;
+                num_points++;
+            }
+        }
+        merged_points.resize(num_points);
+        return merged_points;    
     }
 
     void essential2transform(const Eigen::Matrix3f& E,

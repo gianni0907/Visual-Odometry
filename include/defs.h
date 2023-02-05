@@ -25,6 +25,8 @@ namespace pr {
     typedef std::pair<int,int> IntPair;
     typedef std::vector<IntPair > IntPairVector;
 
+    typedef std::vector<Eigen::Isometry3f, Eigen::aligned_allocator<Eigen::Isometry3f> > TransfVector;
+
     typedef struct{
         int id;
         Eigen::Vector3f p;
