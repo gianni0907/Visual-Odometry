@@ -44,12 +44,12 @@ namespace pr {
     typedef std::vector<Point3d> Points3dVector;
     
     typedef struct{
-        Eigen::Isometry3f gt_pose;
-        Eigen::Isometry3f odom_pose;
+        Eigen::Vector3f gt_pose;
         Points2dVector points;
-    } Meas;
+    } Observations;
         
-            
+    typedef std::vector<Observations> ObsVector;
+
     template <typename SquareMatrixType_>
     inline Eigen::Matrix<typename SquareMatrixType_::Scalar,
                   SquareMatrixType_::RowsAtCompileTime, 1>

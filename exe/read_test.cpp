@@ -17,7 +17,6 @@ int main (int args, char** argv){
     Vector3fVector trajectory=getGroundTruthTrajectory();
     int num_poses=trajectory.size();
     cout << num_poses << endl;
-    trajectory.resize(num_poses);
     cout << trajectory[120].x() << "," <<
             trajectory[120].y() << "," <<
             trajectory[120].z() << endl;
@@ -26,12 +25,26 @@ int main (int args, char** argv){
     Points3dVector world_points=getWorld();
     int num_points=world_points.size();
     cout << num_points << endl;
-    world_points.resize(num_points);
     cout << world_points[598].id << "\t[" <<
             world_points[598].p.x() << "," <<
             world_points[598].p.y() << "," <<
             world_points[598].p.z() << "]\t[";
-         for (int i=0;i<world_points[598].appearance.size();i++)
-            cout << world_points[598].appearance(i) << ",";
-         cout << "]" << endl;
+    for (int i=0;i<world_points[598].appearance.size();i++)
+        cout << world_points[598].appearance(i) << ",";
+    cout << "]" << endl;
+
+    //test meas-XXXXX.dat files read
+    ObsVector observations=getObservations();
+    int num_obs=observations.size();
+    cout << num_obs << endl;
+    cout << "[" << observations[65].gt_pose.x() << ","
+                << observations[65].gt_pose.y() << "," 
+                << observations[65].gt_pose.z() << "]\t" << endl;
+    cout << "[" << observations[65].points[10].p.x() << ","
+                << observations[65].points[10].p.y() << "]\t[";
+    for (int i=0;i<observations[65].points[10].appearance.size();i++)
+        cout << observations[65].points[10].appearance(i) << ",";
+    cout << "]" << endl;
+    for (size_t i=0;i<observations[65].points.size();i++)
+        cout << observations[65].points[i].id << endl;
 }
