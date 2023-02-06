@@ -11,8 +11,8 @@ int main(int argc, char** argv){
     vector<float> errors;
     Points2dVector img1_points, img2_points;
     Points2dVector img1_matching_points, img2_matching_points;
-    Eigen::Vector3f lower_left_bottom(-10,-10,-10);
-    Eigen::Vector3f upper_right_top(10,10,10);
+    Eigen::Vector3f lower_left_bottom(-10,-10,0.0f);
+    Eigen::Vector3f upper_right_top(10,10,2.0f);
     int num_points=1000;
     int num_projected_points1=0;
     int num_projected_points2=0;
@@ -30,8 +30,8 @@ int main(int argc, char** argv){
 
     //Consider an homogeneous transformation expressing the cam1(world) wrt cam2
     Eigen::Isometry3f relative_X=Eigen::Isometry3f::Identity();
-    relative_X.linear()=Rz(0.15);
-    relative_X.translation()=Eigen::Vector3f(-2.0f, 1.5f, 0.0f);
+    relative_X.linear()=Rz(0.0f);
+    relative_X.translation()=Eigen::Vector3f(-2.0f, 0.0f, 0.0f);
     cout << "Ground truth transformation:" << endl;
     cout << relative_X.linear() << endl << relative_X.translation() << endl;
     cout << endl;
