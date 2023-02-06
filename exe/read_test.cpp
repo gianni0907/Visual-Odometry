@@ -14,8 +14,8 @@ int main (int args, char** argv){
     cout << dimension(0) << "," << dimension(1) << endl;
 
     //test trajectory.dat file read
-    Vector3fVector trajectory;
-    int num_poses=getGroundTruthTrajectory(trajectory);
+    Vector3fVector trajectory=getGroundTruthTrajectory();
+    int num_poses=trajectory.size();
     cout << num_poses << endl;
     trajectory.resize(num_poses);
     cout << trajectory[120].x() << "," <<

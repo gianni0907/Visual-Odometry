@@ -34,8 +34,8 @@ namespace pr{
         return cam;
     }
 
-    int getGroundTruthTrajectory(Vector3fVector& trajectory){
-        trajectory.resize(150);
+    Vector3fVector getGroundTruthTrajectory(){
+        Vector3fVector trajectory(200);
         ifstream indata;
         float trash;
         char* path=getenv("HOME");
@@ -55,6 +55,6 @@ namespace pr{
         }
         num_poses--;
         trajectory.resize(num_poses);
-        return num_poses;
+        return trajectory;
     }
 }
