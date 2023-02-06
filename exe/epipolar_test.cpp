@@ -120,7 +120,7 @@ int main(int argc, char** argv){
     Eigen::Matrix3f F_gt,F,E_gt,E;
     Eigen::Isometry3f X1,X2,X_est;
     F_gt=transform2fundamental(camera_matrix,relative_X);
-    F=estimateFundamental(img1_matching_points,img2_matching_points);
+    F=estimateFundamental(img1_points,img2_points);
     cout << endl;
     cout << "Ground truth F:" << endl;
     cout << F_gt << endl;
@@ -150,7 +150,7 @@ int main(int argc, char** argv){
     cout << "Estimated X2:" << endl;
     cout << X2.linear() << endl << X2.translation() << endl;
     cout << endl;
-    X_est=estimateTransform(camera_matrix,img1_matching_points,img2_matching_points);
+    X_est=estimateTransform(camera_matrix,img1_points,img2_points);
     cout << "Estimated transformation:" << endl;
     cout << X_est.linear() << endl << X_est.translation() << endl;
     cout << endl;

@@ -254,17 +254,19 @@ namespace pr{
 
     const Eigen::Matrix3f estimateFundamental(const Points2dVector& img1_points,
                                               const Points2dVector& img2_points){
-        size_t n_points=img1_points.size();
         Eigen::Matrix<float, 9, 9> H;
         H.setZero();
         Eigen::Matrix3f tmp_mat,Fa,F,sing_values,T1,T2;
         Vector9f A,eig_vec;
         Eigen::Vector3f img1_3dpoint,img2_3dpoint;
-        T1=normTransform(img1_points);
-        T2=normTransform(img2_points);
+        Points2dVector matching1_points,matching2_points;
+        pruneUnmatchingProjectedPoints(img1_points,img2_points,matching1_points,matching2_points);
+        size_t n_points=matching1_points.size();
+        T1=normTransform(matching1_points);
+        T2=normTransform(matching2_points);
         for (size_t i=0; i<n_points; i++){
-            img1_3dpoint << img1_points[i].p.x(), img1_points[i].p.y(), 1;
-            img2_3dpoint << img2_points[i].p.x(), img2_points[i].p.y(), 1;
+            img1_3dpoint << matching1_points[i].p.x(), matching1_points[i].p.y(), 1;
+            img2_3dpoint << matching2_points[i].p.x(), matching2_points[i].p.y(), 1;
             tmp_mat=(T1*img1_3dpoint)*(T2*img2_3dpoint).transpose();
             A << tmp_mat(0,0), tmp_mat(1,0), tmp_mat(2,0),
                  tmp_mat(0,1), tmp_mat(1,1), tmp_mat(2,1),
