@@ -11,7 +11,7 @@ namespace pr{
         char* path=getenv("HOME");
         indata.open(string(path) + "/Desktop/probrob_proj/02-VisualOdometry/data/camera.dat");
         if(!indata){
-            cerr << "Error: file could not be opened" << endl;
+            cerr << "Error: camera.dat file could not be opened" << endl;
             exit(1);
         }
         indata.getline(word,100,'\n');
@@ -32,5 +32,29 @@ namespace pr{
         indata.close();
         Camera cam(height,width,z_near,z_far,K);
         return cam;
+    }
+
+    int getGroundTruthTrajectory(Vector3fVector& trajectory){
+        trajectory.resize(150);
+        ifstream indata;
+        float trash;
+        char* path=getenv("HOME");
+        int num_poses=0;
+        indata.open(string(path) + "/Desktop/probrob_proj/02-VisualOdometry/data/trajectory.dat");
+        if(!indata){
+            cerr << "Error: trajectory.dat file could not be opened" << endl;
+            exit(1);
+        }
+        while(!indata.eof()){
+            for (int i=0;i<4;i++)
+                indata >> trash;
+            indata >> trajectory[num_poses].x()
+                   >> trajectory[num_poses].y()
+                   >> trajectory[num_poses].z();
+            num_poses++;
+        }
+        num_poses--;
+        trajectory.resize(num_poses);
+        return num_poses;
     }
 }
