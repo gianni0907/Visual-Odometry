@@ -10,7 +10,10 @@ namespace pr{
     //return a camera object with parameters specified in camera.dat file
     Camera getCamera();
 
-    //read the ground truth trajectory from the file trajecotry.dat
+    //read the ground truth trajectory from trajectory.dat file
     Vector3fVector getGroundTruthTrajectory();
+
+    //read the ground truth world points from world.dat file
+    Points3dVector getWorld();
 }
 

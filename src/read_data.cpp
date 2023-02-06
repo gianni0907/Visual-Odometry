@@ -57,4 +57,29 @@ namespace pr{
         trajectory.resize(num_poses);
         return trajectory;
     }
+
+    Points3dVector getWorld(){
+        Points3dVector world_points(2000);
+        int num_points=0;
+        ifstream indata;
+        char* path=getenv("HOME");
+        indata.open(string(path) + "/Desktop/probrob_proj/02-VisualOdometry/data/world.dat");
+        if(!indata){
+            cerr << "Error: world.dat file could not be opened" << endl;
+            exit(1);
+        }
+        while(!indata.eof()){
+            indata >> world_points[num_points].id;
+            indata >> world_points[num_points].p.x()
+                   >> world_points[num_points].p.y()
+                   >> world_points[num_points].p.z();
+            for (size_t i=0;i<world_points[num_points].appearance.size();i++)
+                indata >> world_points[num_points].appearance(i);
+            num_points++;
+        }
+        num_points--;
+        world_points.resize(num_points);
+        return world_points;
+    }
+
 }
