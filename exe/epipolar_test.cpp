@@ -154,6 +154,9 @@ int main(int argc, char** argv){
     cout << "Estimated transformation:" << endl;
     cout << X_est.linear() << endl << X_est.translation() << endl;
     cout << endl;
+    cout << "Estimated transformation:" << endl;
+    cout << X_est.matrix() << endl;
+    cout << endl;
     cout << "Ground truth/estimated transformation ratio:" << endl;
     for (int i=0;i<3;i++){
         for (int j=0;j<4;j++)

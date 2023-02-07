@@ -96,6 +96,27 @@ namespace pr {
              0,  0,  1;
         return R;
     }
+
+    inline Eigen::Isometry3f v2t(const Eigen::Vector3f& t){
+        Eigen::Isometry3f T;
+        T.setIdentity();
+        T.translation() << t(0), t(1), 0;
+        float c = cos(t(2));
+        float s = sin(t(2));
+        T.linear() << c, -s, 0,
+                      s, c, 0,
+                      0, 0, 1;
+        return T;
+    }
+
+    inline Eigen::Vector3f t2v(const Eigen::Isometry3f& t){
+        Eigen::Vector3f v;
+        v(0)=t.translation().x();
+        v(1)=t.translation().y();
+        v(2) = atan2(t.linear()(1,0), t.linear()(0,0));
+        return v;
+    }
+
     inline Eigen::Isometry3f v2tEuler(const Vector6f& v){
         Eigen::Isometry3f T;
         T.linear()=Rx(v[3])*Ry(v[4])*Rz(v[5]);

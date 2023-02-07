@@ -51,7 +51,7 @@ int main (int argc, char** argv){
         est_transf[i]=Eigen::Isometry3f::Identity();
     }        
     float x=0.2f;
-    float y=0.0f;
+    float y=0.15f;
     float th=0.0f;
     for (int i=0; i<num_transf;i++){
         rel_transf[i].linear()=Rz(th);
@@ -94,7 +94,7 @@ int main (int argc, char** argv){
     }
 
     //then triangulate to obtain points expressed in cam1 ref frame
-    //since relatice icp is realized
+    //since relative icp is realized
     num_triangulated_points[0]=triangulatePoints(camera_matrix,
                                                  est_transf[0].inverse(),
                                                  img_points[1],

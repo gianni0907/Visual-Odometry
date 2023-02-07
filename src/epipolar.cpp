@@ -291,6 +291,10 @@ namespace pr{
                                               const Points2dVector& img2_points){
         Eigen::Matrix3f F;
         Eigen::Isometry3f X1,X2,X_tmp,X;
+        X1=Eigen::Isometry3f::Identity();
+        X2=Eigen::Isometry3f::Identity();
+        X_tmp=Eigen::Isometry3f::Identity();
+        X=Eigen::Isometry3f::Identity();
         Points3dVector points;
         std::vector<float> errors;
         int num_points=0;
