@@ -8,10 +8,13 @@ int main (int args, char** argv){
 
     //test camera.dat file read
     Camera cam;
+    Eigen::Isometry3f cam_in_rob;
     cam=getCamera();
     Eigen::Vector2f dimension;
     dimension=cam.getDimension();
+    cam_in_rob=cam.camInRobPose();
     cout << dimension(0) << "," << dimension(1) << endl;
+    cout << cam_in_rob.matrix() << endl;
 
     //test trajectory.dat file read
     Vector3fVector trajectory=getGroundTruthTrajectory();

@@ -12,7 +12,8 @@ namespace pr {
                float z_near=0,
                float z_far=10,
                const Eigen::Matrix3f& camera_matrix=Eigen::Matrix3f::Identity(),
-               const Eigen::Isometry3f& world_in_cam_pose=Eigen::Isometry3f::Identity());
+               const Eigen::Isometry3f& world_in_cam_pose=Eigen::Isometry3f::Identity(),
+               const Eigen::Isometry3f& cam_in_rob_pose=Eigen::Isometry3f::Identity());
 
         // project a single point on the image plane
         inline bool projectPoint(Eigen::Vector2f& img_point,
@@ -36,6 +37,7 @@ namespace pr {
                           bool keep_indices=false);
 
         inline const Eigen::Isometry3f& worldInCameraPose() const {return _world_in_cam_pose;}
+        inline const Eigen::Isometry3f& camInRobPose() const {return _cam_in_rob_pose;}
         inline void setWorldInCameraPose(const Eigen::Isometry3f& pose)  {_world_in_cam_pose=pose;}
         inline const Eigen::Matrix3f& cameraMatrix() const {return _camera_matrix;}
         inline const Eigen::Vector2f getDimension() const {
@@ -50,6 +52,7 @@ namespace pr {
         float _z_near;
         float _z_far;
         Eigen::Isometry3f _world_in_cam_pose;
+        Eigen::Isometry3f _cam_in_rob_pose;
         Eigen::Matrix3f _camera_matrix;
     };
 }

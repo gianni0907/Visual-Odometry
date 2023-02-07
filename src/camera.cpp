@@ -6,13 +6,15 @@ namespace pr {
                    float z_near,
                    float z_far,
                    const Eigen::Matrix3f& camera_matrix,
-                   const Eigen::Isometry3f& world_in_cam_pose):
+                   const Eigen::Isometry3f& world_in_cam_pose,
+                   const Eigen::Isometry3f& cam_in_rob_pose):
         _height(height),
         _width(width),
         _z_near(z_near),
         _z_far(z_far),
         _camera_matrix(camera_matrix),
-        _world_in_cam_pose(world_in_cam_pose){}
+        _world_in_cam_pose(world_in_cam_pose),
+        _cam_in_rob_pose(cam_in_rob_pose){}
 
     int Camera::projectPoints(Points2dVector& img_points,
                               const Points3dVector& world_points,

@@ -5,6 +5,7 @@ namespace pr{
 
     Camera getCamera(){
         Eigen::Matrix3f K;
+        Eigen::Isometry3f cam_in_rob;
         float z_near,z_far,width,height;
         char trash[100];
         ifstream indata;
@@ -18,8 +19,10 @@ namespace pr{
         for (int i=0;i<9;i++){
             indata >> K(i/3,i%3);
         }
-        for (int i=0;i<6;i++){
-            indata.getline(trash,100,'\n');
+        indata.getline(trash,100,'\n');
+        indata.getline(trash,100,'\n');
+        for (int i=0;i<16;i++){
+            indata >> cam_in_rob(i/4,i%4);
         }
         indata.getline(trash,10,' ');
         indata >> z_near;
@@ -30,7 +33,7 @@ namespace pr{
         indata.getline(trash,10,' ');
         indata >> height;
         indata.close();
-        Camera cam(height,width,z_near,z_far,K);
+        Camera cam(height,width,z_near,z_far,K,Eigen::Isometry3f::Identity(),cam_in_rob);
         return cam;
     }
 
