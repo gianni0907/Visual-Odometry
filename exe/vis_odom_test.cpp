@@ -27,10 +27,17 @@ int main (int argc, char** argv){
     int num_triangulated_points=0;
     
     //Instantiate file handlers to write ground truth and estimated robot trajectory in files
-    ofstream out_gt,out_est;
+    //and also to save ground truth and estimated world (i.e. 3d points)
+    ofstream out_gt,out_est,out_gt_wrld,out_est_wrld;
     char* path=getenv("HOME");
-    out_gt.open(string(path)+"/Desktop/probrob_proj/to_plot/gt_trajectory.dat");
-    out_est.open(string(path)+"/Desktop/probrob_proj/to_plot/est_trajectory.dat");
+    out_gt.open(string(path)+"/Desktop/probrob_proj/to_plot/gt_trajectory_merging.dat");
+    out_est.open(string(path)+"/Desktop/probrob_proj/to_plot/est_trajectory_merging.dat");
+    out_gt_wrld.open(string(path)+"/Desktop/probrob_proj/to_plot/gt_world.dat");
+    out_est_wrld.open(string(path)+"/Desktop/probrob_proj/to_plot/est_world.dat");
+
+    //insert gt_world in file
+    for (size_t i=0;i<gt_world.size();i++)
+        out_gt_wrld << gt_world[i].p.transpose() << endl;
 
     //read the first gt_pose robot pose and store it for plots
     gt_rob_pose=v2t_aug(measurements[0].gt_pose);
@@ -127,9 +134,18 @@ int main (int argc, char** argv){
                                                   new_triang,
                                                   errors);
         //here choose ONLY one of the following two lines
-        curr_3dpoints=new_triang; //run this line to consider ONLY new triangulated points for next picp iteration
-        //curr_3dpoints=mergePoints(est_transf,new_triang,curr_3dpoints); //run this if you want to merge new triangulate points with the old ones
+        //curr_3dpoints=new_triang; //run this line to consider ONLY new triangulated points for next picp iteration
+        curr_3dpoints=mergePoints(est_transf,new_triang,curr_3dpoints); //run this if you want to merge new triangulate points with the old ones
+    }
+
+    //express estimated world points in world frame and save them in file
+    Eigen::Vector3f est_world_point;
+    for (size_t i=0;i<curr_3dpoints.size();i++){
+        est_world_point=est_rob_pose*cam_in_rob*curr_3dpoints[i].p;
+        out_est_wrld << est_world_point.transpose() << endl;
     }
     out_gt.close();
     out_est.close();
+    out_gt_wrld.close();
+    out_est_wrld.close();
 }

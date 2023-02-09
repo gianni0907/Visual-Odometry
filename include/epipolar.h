@@ -51,7 +51,7 @@ namespace pr{
     //merge two sets of 3d points
     //taking the most recent for corresponding points
     //and expressing all them in the ref frame of new_points
-    //using the transformation X
+    //using the transformation X to express old points in new_points frame
     Points3dVector mergePoints(const Eigen::Isometry3f& X,
                                const Points3dVector& new_points,
                                const Points3dVector& points);
