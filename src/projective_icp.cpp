@@ -108,11 +108,10 @@ namespace pr {
     Points2dVector current_image_points;
     IntPairVector imgs_correspondences, wrld_correspondences;
     const Eigen::Vector2f dimension=_camera.getDimension();
-    int num_cur_img_points=0;
     char key=0;
     const char ESC_key=27;
     for (int i=0; i<_num_iterations && key!=ESC_key; i++){
-      num_cur_img_points=_camera.projectPoints(current_image_points, *_world_points, _keep_indices);
+      _camera.projectPoints(current_image_points, *_world_points, _keep_indices);
       computeImg2ImgCorrespondences(imgs_correspondences, *_reference_image_points, current_image_points);
       computeWrld2ImgCorrespondences(wrld_correspondences, *_world_points, *_reference_image_points);
       RGBImage shown_image(dimension(0),dimension(1));
@@ -125,7 +124,7 @@ namespace pr {
 		                      imgs_correspondences,
 		                      cv::Scalar(0,255,0));
       cv::imshow("picp_solver_test", shown_image);
-      key=cv::waitKey(600);
+      key=cv::waitKey(5);
       oneRound(wrld_correspondences,false);
     }
   }

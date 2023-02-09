@@ -97,7 +97,7 @@ namespace pr {
         return R;
     }
 
-    inline Eigen::Isometry3f v2t(const Eigen::Vector3f& t){
+    inline Eigen::Isometry3f v2t_aug(const Eigen::Vector3f& t){
         Eigen::Isometry3f T;
         T.setIdentity();
         T.translation() << t(0), t(1), 0;

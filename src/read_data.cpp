@@ -33,7 +33,7 @@ namespace pr{
         indata.getline(trash,10,' ');
         indata >> height;
         indata.close();
-        Camera cam(height,width,z_near,z_far,K,Eigen::Isometry3f::Identity(),cam_in_rob);
+        Camera cam(height,width,z_near,z_far,K,cam_in_rob.inverse(),cam_in_rob);
         return cam;
     }
 

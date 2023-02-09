@@ -157,8 +157,9 @@ namespace pr{
         return num_success;
     }
 
-    Points3dVector mergePoints(const Points3dVector& new_points,
-                              const Points3dVector& points){
+    Points3dVector mergePoints(const Eigen::Isometry3f& X,
+                               const Points3dVector& new_points,
+                               const Points3dVector& points){
         Points3dVector merged_points=new_points;
         size_t num_points=merged_points.size();
         merged_points.resize(new_points.size()+points.size());
@@ -172,7 +173,9 @@ namespace pr{
                 }
             }
             if (!in){
-                merged_points[num_points]=point;
+                merged_points[num_points].p=X*point.p;
+                merged_points[num_points].id=point.id;
+                merged_points[num_points].appearance=point.appearance;
                 num_points++;
             }
         }
@@ -199,14 +202,14 @@ namespace pr{
         skew_t1=R1*E;
         skew_t2=R2*E;
         X1.linear()=R1;
-        X1.translation() << skew_t1(2,1)-skew_t1(1,2),
-                            skew_t1(0,2)-skew_t1(2,0),
-                            skew_t1(1,0)-skew_t1(0,1);
+        X1.translation() << skew_t1(2,1),//-skew_t1(1,2),
+                            skew_t1(0,2),//-skew_t1(2,0),
+                            skew_t1(1,0);//-skew_t1(0,1);
         
         X2.linear()=R2;
-        X2.translation() << skew_t2(2,1)-skew_t2(1,2),
-                            skew_t2(0,2)-skew_t2(2,0),
-                            skew_t2(1,0)-skew_t2(0,1);
+        X2.translation() << skew_t2(2,1),//-skew_t2(1,2),
+                            skew_t2(0,2),//-skew_t2(2,0),
+                            skew_t2(1,0);//-skew_t2(0,1);
     }
 
     const Eigen::Matrix3f transform2essential(const Eigen::Isometry3f& X){

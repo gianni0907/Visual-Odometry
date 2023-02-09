@@ -174,7 +174,7 @@ int main (int argc, char** argv){
         point.p=est_transf[1].linear()*point.p+est_transf[1].translation();
     }
     Points3dVector merged_points;
-    merged_points=mergePoints(new_triang,triang_points);
+    merged_points=mergePoints(est_transf[1],new_triang,triang_points);
     cout <<"Merged world_points: " << merged_points.size() << endl;
     for (const Point3d& point: merged_points){
         cout << "[" << point.p.x() <<
@@ -183,11 +183,11 @@ int main (int argc, char** argv){
     }
     // PICPSolver solver1;
     // est_cameras[0].setWorldInCameraPose(init_X);
-    // solver1.init(est_cameras[0],
-    //              merged_points,
-    //              img_points[1],
-    //              num_iterations,
-    //              keep_indices);
+    solver.init(est_camera,
+                 merged_points,
+                 img_points[1],
+                 num_iterations,
+                 keep_indices);
     // solver1.setKernelThreshold(10000);
     // solver1.run();
     // est_cameras[0]=solver1.camera();

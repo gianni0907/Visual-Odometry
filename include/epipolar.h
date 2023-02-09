@@ -48,9 +48,12 @@ namespace pr{
                           Points3dVector& points,
                           std::vector<float>& errors);
 
-    //merge two sets of world points
+    //merge two sets of 3d points
     //taking the most recent for corresponding points
-    Points3dVector mergePoints(const Points3dVector& new_points,
+    //and expressing all them in the ref frame of new_points
+    //using the transformation X
+    Points3dVector mergePoints(const Eigen::Isometry3f& X,
+                               const Points3dVector& new_points,
                                const Points3dVector& points);
 
     void essential2transform(const Eigen::Matrix3f& E,
