@@ -65,25 +65,6 @@ namespace pr{
         correspondences.resize(num_correspondences);
     }
 
-    int pruneUnmatchingProjectedPoints(const Points2dVector& img1_points,
-                                       const Points2dVector& img2_points,
-                                       Points2dVector& img1_matching_points,
-                                       Points2dVector& img2_matching_points){
-        int num_matching_points=0;
-        IntPairVector correspondences;
-        computeImg2ImgCorrespondences(correspondences,img1_points,img2_points);
-        img1_matching_points.resize(min(img1_points.size(),img2_points.size()));
-        img2_matching_points.resize(min(img1_points.size(),img2_points.size()));
-        for(size_t i=0; i<correspondences.size(); i++){
-            img1_matching_points[num_matching_points]=img1_points[correspondences[i].first];
-            img2_matching_points[num_matching_points]=img2_points[correspondences[i].second];
-            num_matching_points++;
-        }
-        img1_matching_points.resize(num_matching_points);
-        img2_matching_points.resize(num_matching_points);
-        return num_matching_points;
-    }
-
     bool triangulatePoint(const Eigen::Vector3f& o2,
                           const Eigen::Vector3f& d1,
                           const Eigen::Vector3f& d2,
@@ -119,36 +100,32 @@ namespace pr{
         Eigen::Matrix3f iK=K.inverse();
         Eigen::Matrix3f iRiK=iX.linear()*iK;
         Eigen::Vector3f o2=iX.translation();
-        Points2dVector img1_matching_points,img2_matching_points;
         Eigen::Vector3f p1_cam,p2_cam,img1_3dpoint,img2_3dpoint;
         int num_success=0;
         bool success=false;
+        IntPairVector correspondences;
 
-        //first select only points projected in both images
-        img1_matching_points.resize(img1_points.size());
-        img2_matching_points.resize(img2_points.size());
-        points.resize(img1_points.size());
-        errors.resize(img1_points.size());
-        pruneUnmatchingProjectedPoints(img1_points,
-                                       img2_points,
-                                       img1_matching_points,
-                                       img2_matching_points);
+        //compute correspondences between projected points
+        computeImg2ImgCorrespondences(correspondences, img1_points, img2_points);
+        points.resize(correspondences.size());
+        errors.resize(correspondences.size());
 
         //express the points in the 1st camera coordinates (i.e. the world)
         //and apply the triangulation
-        for (size_t i=0; i<img1_matching_points.size(); i++){         
-            img1_3dpoint << img1_matching_points[i].p.x(),
-                            img1_matching_points[i].p.y(),
+        for (size_t i=0; i<correspondences.size(); i++){
+
+            img1_3dpoint << img1_points[correspondences[i].first].p.x(),
+                            img1_points[correspondences[i].first].p.y(),
                             1;
-            img2_3dpoint << img2_matching_points[i].p.x(),
-                            img2_matching_points[i].p.y(),
+            img2_3dpoint << img2_points[correspondences[i].second].p.x(),
+                            img2_points[correspondences[i].second].p.y(),
                             1;
             p1_cam=iK*img1_3dpoint;
             p2_cam=iRiK*img2_3dpoint;
             success=triangulatePoint(o2,p1_cam,p2_cam,points[num_success].p,errors[num_success]);
             if (success){
-                points[num_success].id=img1_matching_points[i].id;
-                points[num_success].appearance=img1_matching_points[i].appearance;
+                points[num_success].id=img1_points[correspondences[i].first].id;
+                points[num_success].appearance=img1_points[correspondences[i].first].appearance;
                 num_success++;
             }
         }
@@ -237,21 +214,35 @@ namespace pr{
         return iK.transpose()*transform2essential(X)*iK;
     }
 
-    const Eigen::Matrix3f normTransform(const Points2dVector& img_points){
-        Eigen::Matrix3f T;
-        T.setZero();
-        float x_max,y_max;
-        x_max=img_points[0].p.x();
-        y_max=img_points[0].p.y();
-        for (size_t i=1; i<img_points.size();i++){
-            if (img_points[i].p.x()>x_max)
-                x_max=img_points[i].p.x();
-            if (img_points[i].p.y()>y_max)
-                y_max=img_points[i].p.y();
+    const Matrix3fPair normTransform(const IntPairVector& correspondences,
+                                     const Points2dVector& img1_points,
+                                     const Points2dVector& img2_points){
+        Matrix3fPair T;
+        T.first.setZero();
+        T.second.setZero();
+        float x1_max,x2_max,y1_max,y2_max;
+        x1_max=img1_points[correspondences[0].first].p.x();
+        y1_max=img1_points[correspondences[0].first].p.y();
+        x2_max=img2_points[correspondences[0].second].p.x();
+        y2_max=img2_points[correspondences[0].second].p.y();
+        for (size_t i=1; i<correspondences.size();i++){
+            int idx1=correspondences[i].first;
+            int idx2=correspondences[i].second;
+            if (img1_points[idx1].p.x()>x1_max)
+                x1_max=img1_points[idx1].p.x();
+            if (img1_points[idx1].p.y()>y1_max)
+                y1_max=img1_points[idx1].p.y();
+            if (img2_points[idx2].p.x()>x2_max)
+                x2_max=img2_points[idx2].p.x();
+            if (img2_points[idx2].p.y()>y2_max)
+                y2_max=img2_points[idx2].p.y();
         }
-        T << 2/x_max, 0, -1,
-             0, -2/y_max, 1,
-             0, 0, 1;
+        T.first << 2/x1_max, 0, -1,
+                0, -2/y1_max, 1,
+                0, 0, 1;
+        T.second << 2/x2_max, 0, -1,
+                0, -2/y2_max, 1,
+                0, 0, 1;
         return T;
     }
 
@@ -259,18 +250,25 @@ namespace pr{
                                               const Points2dVector& img2_points){
         Eigen::Matrix<float, 9, 9> H;
         H.setZero();
-        Eigen::Matrix3f tmp_mat,Fa,F,sing_values,T1,T2;
+        Eigen::Matrix3f tmp_mat,Fa,F,sing_values;
+        Matrix3fPair T;
         Vector9f A,eig_vec;
         Eigen::Vector3f img1_3dpoint,img2_3dpoint;
-        Points2dVector matching1_points,matching2_points;
-        pruneUnmatchingProjectedPoints(img1_points,img2_points,matching1_points,matching2_points);
-        size_t n_points=matching1_points.size();
-        T1=normTransform(matching1_points);
-        T2=normTransform(matching2_points);
+        IntPairVector correspondences;
+
+        //compute correspondences between projected points
+        computeImg2ImgCorrespondences(correspondences, img1_points, img2_points);
+        size_t n_points=correspondences.size();
+        //compute the normalization transform, one for each set of points
+        T=normTransform(correspondences,img1_points,img2_points);
         for (size_t i=0; i<n_points; i++){
-            img1_3dpoint << matching1_points[i].p.x(), matching1_points[i].p.y(), 1;
-            img2_3dpoint << matching2_points[i].p.x(), matching2_points[i].p.y(), 1;
-            tmp_mat=(T1*img1_3dpoint)*(T2*img2_3dpoint).transpose();
+            img1_3dpoint << img1_points[correspondences[i].first].p.x(),
+                            img1_points[correspondences[i].first].p.y(),
+                            1;
+            img2_3dpoint << img2_points[correspondences[i].second].p.x(),
+                            img2_points[correspondences[i].second].p.y(),
+                            1;
+            tmp_mat=(T.first*img1_3dpoint)*(T.second*img2_3dpoint).transpose();
             A << tmp_mat(0,0), tmp_mat(1,0), tmp_mat(2,0),
                  tmp_mat(0,1), tmp_mat(1,1), tmp_mat(2,1),
                  tmp_mat(0,2), tmp_mat(1,2), tmp_mat(2,2);
@@ -280,7 +278,7 @@ namespace pr{
         Fa << eig_vec(0), eig_vec(3), eig_vec(6),
               eig_vec(1), eig_vec(4), eig_vec(7),
               eig_vec(2), eig_vec(5), eig_vec(8);
-        Fa=T1.transpose()*Fa*T2;
+        Fa=T.first.transpose()*Fa*T.second;
         Eigen::JacobiSVD<Eigen::Matrix3f> svd(Fa, Eigen::ComputeFullU | Eigen::ComputeFullV);
         sing_values=svd.singularValues().asDiagonal();
         sing_values(2,2)=0;

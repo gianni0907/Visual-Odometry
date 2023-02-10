@@ -10,13 +10,11 @@ int main(int argc, char** argv){
     Points3dVector world_points,triangulated_world_points;
     vector<float> errors;
     Points2dVector img1_points, img2_points;
-    Points2dVector img1_matching_points, img2_matching_points;
     Eigen::Vector3f lower_left_bottom(-10,-10,0.0f);
     Eigen::Vector3f upper_right_top(10,10,2.0f);
     int num_points=1000;
     int num_projected_points1=0;
     int num_projected_points2=0;
-    int num_matching_points=0;
     int num_triangulated_points=0;
     const bool keep_indices=false;
 
@@ -69,12 +67,6 @@ int main(int argc, char** argv){
         cv::imshow("projection_img2_test", shown_image2);
         key=cv::waitKey(0);
     }
-    //TEST PRUNING THE UNMATCHING PROJECTED POINTS
-    num_matching_points=pruneUnmatchingProjectedPoints(img1_points,
-                                                       img2_points,
-                                                       img1_matching_points,
-                                                       img2_matching_points);
-    cout << "Number of matching points: " << num_matching_points << endl;
 
     //TEST TRIANGULATION
     num_triangulated_points=triangulatePoints(camera_matrix,

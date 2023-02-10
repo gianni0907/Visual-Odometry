@@ -20,14 +20,6 @@ namespace pr{
 				                         const Points3dVector& world1_points,
 				                         const Points3dVector& world2_points);
 
-    //given two images, returns on each image only the points present on both images
-    //assuming correspondences between points with same index in the two images
-    //return number of matching points
-    int pruneUnmatchingProjectedPoints(const Points2dVector& img1_points,
-                                       const Points2dVector& img2_points,
-                                       Points2dVector& img1_matching_points,
-                                       Points2dVector& img2_matching_points);
-
     //triangulates a point given two lines
     //one passing through the origin, with direction d1
     //one passing through point o2, with direction d2
@@ -70,8 +62,10 @@ namespace pr{
     const Eigen::Matrix3f transform2fundamental(const Eigen::Matrix3f& K,
                                                 const Eigen::Isometry3f& X);
 
-    //return a 3x3 transformation matrix to normalize coordinates in [-1;1]
-    const Eigen::Matrix3f normTransform(const Points2dVector& img_points);
+    //for each set of images points, return a 3x3 transformation matrix to normalize coordinates in [-1;1]
+    const Matrix3fPair normTransform(const IntPairVector& correspondences,
+                                     const Points2dVector& img1_points,
+                                     const Points2dVector& img2_points);
 
     //estimates the fundamental matrix given known correspondences of points
     //using 8-points algorithm
