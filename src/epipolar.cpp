@@ -13,7 +13,7 @@ namespace pr{
             reference_point=img1_points[i];
             for (size_t j=0; j<img2_points.size();j++){
                 current_point=img2_points[j];
-                if (reference_point.id==current_point.id && !(reference_point.p.x()<0 || current_point.p.x()<0)){
+                if (reference_point.appearance==current_point.appearance && !(reference_point.p.x()<0 || current_point.p.x()<0)){
                     correspondences[num_correspondences].first=i;
                     correspondences[num_correspondences].second=j;
                     num_correspondences++;
@@ -35,10 +35,11 @@ namespace pr{
             img_point=img_points[i];
             for (size_t j=0; j<world_points.size();j++){
                 world_point=world_points[j];
-                if (img_point.id==world_point.id && !(img_point.p.x()<0)){
+                if (img_point.appearance==world_point.appearance && !(img_point.p.x()<0)){
                     correspondences[num_correspondences].first=j;
                     correspondences[num_correspondences].second=i;
                     num_correspondences++;
+                    break;
                 }
             }
         }
@@ -55,10 +56,11 @@ namespace pr{
             world1_point=world1_points[i];
             for (size_t j=0; j<world2_points.size();j++){
                 world2_point=world2_points[j];
-                if (world1_point.id==world2_point.id){
-                    correspondences[num_correspondences].first=j;
-                    correspondences[num_correspondences].second=i;
+                if (world1_point.appearance==world2_point.appearance){
+                    correspondences[num_correspondences].first=i;
+                    correspondences[num_correspondences].second=j;
                     num_correspondences++;
+                    break;
                 }
             }
         }
@@ -113,19 +115,20 @@ namespace pr{
         //express the points in the 1st camera coordinates (i.e. the world)
         //and apply the triangulation
         for (size_t i=0; i<correspondences.size(); i++){
-
-            img1_3dpoint << img1_points[correspondences[i].first].p.x(),
-                            img1_points[correspondences[i].first].p.y(),
+            int idx1=correspondences[i].first;
+            int idx2=correspondences[i].second;
+            img1_3dpoint << img1_points[idx1].p.x(),
+                            img1_points[idx1].p.y(),
                             1;
-            img2_3dpoint << img2_points[correspondences[i].second].p.x(),
-                            img2_points[correspondences[i].second].p.y(),
+            img2_3dpoint << img2_points[idx2].p.x(),
+                            img2_points[idx2].p.y(),
                             1;
             p1_cam=iK*img1_3dpoint;
             p2_cam=iRiK*img2_3dpoint;
             success=triangulatePoint(o2,p1_cam,p2_cam,points[num_success].p,errors[num_success]);
             if (success){
-                points[num_success].id=img1_points[correspondences[i].first].id;
-                points[num_success].appearance=img1_points[correspondences[i].first].appearance;
+                points[num_success].id=img1_points[idx1].id;
+                points[num_success].appearance=0.5*(img1_points[idx1].appearance+img2_points[idx2].appearance);
                 num_success++;
             }
         }
@@ -140,19 +143,21 @@ namespace pr{
         Points3dVector merged_points=new_points;
         size_t num_points=merged_points.size();
         merged_points.resize(new_points.size()+points.size());
-        bool in=false;
-        for (const Point3d& point: points){
-            in=false;
-            for (const Point3d& new_point: new_points){
-                if (point.id==new_point.id){
-                    in=true;
+        IntPairVector correspondences;
+        computeWrld2WrldCorrespondences(correspondences,new_points,points);
+        bool inside=false;
+        for (size_t i=0;i<points.size();i++){ //TODO: for on old points and see if they are in correspondences,otherwise you add them in merged_points
+            inside=false;
+            for (const IntPair& corr: correspondences){
+                if (static_cast<int>(i)==corr.second){
+                    inside=true;
                     break;
                 }
             }
-            if (!in){
-                merged_points[num_points].p=X*point.p;
-                merged_points[num_points].id=point.id;
-                merged_points[num_points].appearance=point.appearance;
+            if (!inside){
+                merged_points[num_points].p=X*points[i].p;
+                merged_points[num_points].id=points[i].id;
+                merged_points[num_points].appearance=points[i].appearance;
                 num_points++;
             }
         }
