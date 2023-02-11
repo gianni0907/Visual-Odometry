@@ -43,7 +43,6 @@ int main (int argc, char** argv){
         shown_image=cv::Vec3b(255,255,255);
         drawPoints(shown_image, img_points, cv::Scalar(255,0,0),3);
         cv::imshow("cam_test", shown_image);
-        Eigen::Isometry3f current_pose=cam.worldInCameraPose();
         key=cv::waitKey(0);
     }
     for (int i=0; i< num_projected_points; i++)

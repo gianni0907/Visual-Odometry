@@ -28,6 +28,7 @@ namespace pr {
     typedef std::vector<Eigen::Isometry3f, Eigen::aligned_allocator<Eigen::Isometry3f> > TransfVector;
     typedef std::pair<Eigen::Matrix3f,Eigen::Matrix3f> Matrix3fPair;
     typedef std::vector<Eigen::Vector3f, Eigen::aligned_allocator<Eigen::Vector3f> > Vector3fVector;
+    typedef std::vector<Vector10f, Eigen::aligned_allocator<Vector10f> > Vector10fVector;
 
     typedef struct{
         int id;
@@ -51,13 +52,32 @@ namespace pr {
         
     typedef std::vector<Observations> ObsVector;
 
+    // this invokes the Eigen functions to compute the eigenvalues of
+    // a symmetric matrix. We extract the largest EigenVector of the covariance
+    // which denotes the direction of highest variation.
     template <typename SquareMatrixType_>
     inline Eigen::Matrix<typename SquareMatrixType_::Scalar,
-                  SquareMatrixType_::RowsAtCompileTime, 1>
+                         SquareMatrixType_::RowsAtCompileTime, 1>
+
+    largestEigenVector(const SquareMatrixType_& m) {
+        Eigen::SelfAdjointEigenSolver<SquareMatrixType_> es;
+        es.compute(m);
+        return es.eigenvectors().col(SquareMatrixType_::RowsAtCompileTime-1);
+    }
+
+    template <typename SquareMatrixType_>
+    inline Eigen::Matrix<typename SquareMatrixType_::Scalar,
+                         SquareMatrixType_::RowsAtCompileTime, 1>
     smallestEigenVector(const SquareMatrixType_& m){
         Eigen::SelfAdjointEigenSolver<SquareMatrixType_> es;
         es.compute(m);
         return es.eigenvectors().col(0);
+    }
+
+    template <class Iterator >
+    std::reverse_iterator<Iterator> make_reverse_iterator(Iterator i)
+    {
+        return std::reverse_iterator<Iterator>(i);
     }
 
     inline Eigen::Matrix3f skew(const Eigen::Vector3f& v){

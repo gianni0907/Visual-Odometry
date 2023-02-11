@@ -118,7 +118,8 @@ namespace pr{
             while(!indata.eof()){
                 indata.getline(trash_word,100,' ');
                 indata >> curr_point;
-                indata >> meas.points[curr_point].id;
+                meas.points[curr_point].id=curr_point;
+                indata >> trash_float;
                 indata >> meas.points[curr_point].p.x()
                        >> meas.points[curr_point].p.y();
                 for (int j=0;j<meas.points[curr_point].appearance.size();j++)
