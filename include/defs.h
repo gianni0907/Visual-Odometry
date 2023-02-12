@@ -10,15 +10,19 @@
 #include <unistd.h>
 
 namespace pr {
+    typedef Eigen::Matrix<float, 2, 1> Vector2f;
+    typedef Eigen::Matrix<float, 3, 1> Vector3f;
+    typedef Eigen::Matrix<float, 6, 1> Vector6f;
     typedef Eigen::Matrix<float, 9, 1> Vector9f;
     typedef Eigen::Matrix<float, 10, 1> Vector10f;
+
+    typedef Eigen::Matrix<float, 3, 3> Matrix3f;
+    typedef Eigen::Matrix<float, 6, 6> Matrix6f;
+    typedef Eigen::Matrix<float, 10, 10> Matrix10f;
     typedef Eigen::Matrix<float, 3, 2> Matrix3_2f;
     typedef Eigen::Matrix<float, 2, 3> Matrix2_3f;
     typedef Eigen::Matrix<float, 3, 6> Matrix3_6f;
     typedef Eigen::Matrix<float, 2, 6> Matrix2_6f;
-
-    typedef Eigen::Matrix<float, 6, 6> Matrix6f;
-    typedef Eigen::Matrix<float, 6, 1> Vector6f;
 
     typedef cv::Mat_< cv::Vec3b > RGBImage;
 
@@ -26,27 +30,48 @@ namespace pr {
     typedef std::vector<IntPair > IntPairVector;
 
     typedef std::vector<Eigen::Isometry3f, Eigen::aligned_allocator<Eigen::Isometry3f> > TransfVector;
-    typedef std::pair<Eigen::Matrix3f,Eigen::Matrix3f> Matrix3fPair;
-    typedef std::vector<Eigen::Vector3f, Eigen::aligned_allocator<Eigen::Vector3f> > Vector3fVector;
+    typedef std::pair<Matrix3f,Matrix3f> Matrix3fPair;
+    typedef std::vector<Vector3f, Eigen::aligned_allocator<Vector3f> > Vector3fVector;
     typedef std::vector<Vector10f, Eigen::aligned_allocator<Vector10f> > Vector10fVector;
 
-    typedef struct{
+    typedef struct Point3d{
         int id;
-        Eigen::Vector3f p;
+        Vector3f p;
         Vector10f appearance;
+
+        Point3d(int id_,Vector3f p_, Vector10f a_){
+            id=id_;
+            p=p_;
+            appearance=a_;
+        }
     } Point3d;
 
-    typedef struct{
+    typedef struct Point2d{
         int id;
-        Eigen::Vector2f p;
+        Vector2f p;
         Vector10f appearance;
+        Point2d(int id_,Vector2f p_, Vector10f a_){
+            id=id_;
+            p=p_;
+            appearance=a_;
+        }
     } Point2d;
 
+    typedef struct Point{
+        int id;
+        Vector10f appearance;
+        Point(int id_, Vector10f a_){
+            id=id_;
+            appearance=a_;
+        }
+    } Point;
+
+    typedef std::vector<Point> PointsVector;
     typedef std::vector<Point2d> Points2dVector;
     typedef std::vector<Point3d> Points3dVector;
     
     typedef struct{
-        Eigen::Vector3f gt_pose;
+        Vector3f gt_pose;
         Points2dVector points;
     } Observations;
         
@@ -58,7 +83,6 @@ namespace pr {
     template <typename SquareMatrixType_>
     inline Eigen::Matrix<typename SquareMatrixType_::Scalar,
                          SquareMatrixType_::RowsAtCompileTime, 1>
-
     largestEigenVector(const SquareMatrixType_& m) {
         Eigen::SelfAdjointEigenSolver<SquareMatrixType_> es;
         es.compute(m);
@@ -72,12 +96,6 @@ namespace pr {
         Eigen::SelfAdjointEigenSolver<SquareMatrixType_> es;
         es.compute(m);
         return es.eigenvectors().col(0);
-    }
-
-    template <class Iterator >
-    std::reverse_iterator<Iterator> make_reverse_iterator(Iterator i)
-    {
-        return std::reverse_iterator<Iterator>(i);
     }
 
     inline Eigen::Matrix3f skew(const Eigen::Vector3f& v){

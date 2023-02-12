@@ -6,6 +6,7 @@ project(visual_odom)
 #ds set cmake build flags
 set(CMAKE_BUILD_TYPE Release)
 set(CMAKE_CXX_FLAGS "-Wall -std=c++11 -O3 -DNDEBUG") #ds enable all warnings, c++11 features, enable maximum optimization and disable debug symbols
+set(CMAKE_CXX_STANDARD 17)
 
 #ds find and set up dependencies
 find_package(Eigen3 REQUIRED)

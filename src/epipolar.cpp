@@ -127,7 +127,7 @@ namespace pr{
             p2_cam=iRiK*img2_3dpoint;
             success=triangulatePoint(o2,p1_cam,p2_cam,points[num_success].p,errors[num_success]);
             if (success){
-                points[num_success].id=num_success;
+                points[num_success].id=img1_points[idx1].id;
                 points[num_success].appearance=0.5*(img1_points[idx1].appearance+img2_points[idx2].appearance);
                 num_success++;
             }
@@ -156,7 +156,7 @@ namespace pr{
             }
             if (!inside){
                 merged_points[num_points].p=X*points[i].p;
-                merged_points[num_points].id=num_points;
+                merged_points[num_points].id=points[i].id;
                 merged_points[num_points].appearance=points[i].appearance;
                 num_points++;
             }

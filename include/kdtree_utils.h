@@ -8,11 +8,12 @@ namespace pr{
                          IteratorType_ end,
                          const typename IteratorType_::value_type& query,
                          const float norm) {
-        const float squared_norm = norm*norm;
+        using Scalar = float;
+        const Scalar squared_norm = norm*norm;
         int matches=0;
         for (auto it=begin; it!=end; ++it) {
-            auto& p=*(it.p);
-            if ((p-query.p).squaredNorm()<squared_norm) {
+            auto& p=*it;
+            if ((p.appearance-query.appearance).squaredNorm()<squared_norm) {
                 answers.push_back(&p);
                 ++matches;
             }
@@ -27,12 +28,12 @@ namespace pr{
                         const typename IteratorType_::value_type& query,
                         const float norm) {
         using PointType = typename IteratorType_::value_type;
-        const float squared_norm = norm*norm;
+        using Scalar = float;
         PointType* best=0;
-        float best_squared_norm=norm*norm;
+        Scalar best_squared_norm=norm*norm;
         for (auto it=begin; it!=end; ++it) {
-            auto& p=*(it.p);
-            float squared_distance  = (p-query.p).squaredNorm();
+            auto& p=*it;
+            Scalar squared_distance  = (p.appearance-query.appearance).squaredNorm();
             if ( squared_distance < best_squared_norm) {
                 best=&p;
                 best_squared_norm = squared_distance;
@@ -42,20 +43,18 @@ namespace pr{
     }
 
     template <typename Iterator_>
-    int computeMeanAndCovariance(Eigen::Matrix<float,
-                                               Iterator_::value_type::RowsAtCompileTime, 1>& mean,
-                                 Eigen::Matrix<float,
-                                               Iterator_::value_type::RowsAtCompileTime,
-                                               Iterator_::value_type::RowsAtCompileTime>& cov,
+    int computeMeanAndCovariance(Vector10f& mean,
+                                 Matrix10f& cov,
                                  Iterator_ begin,
                                  Iterator_ end) {
         // mean computed as 1/(end-start) Sum_k={start..end} x_k
         // cov computed as  (1/(end-start) Sum_k={start..end} x_k* x_k^T ) - mean*mean.transpose();
+        using Scalar=float;
         mean.setZero();
         cov.setZero();
         int k=0;
         for (auto it=begin; it!=end; ++it) {
-            const auto& v=*(it.p);
+            const auto& v=(*it).appearance;
             mean += v;
             cov  += v * v.transpose();
             ++k;
@@ -63,7 +62,7 @@ namespace pr{
         mean *= (1./k);
         cov  *= (1./k);
         cov  -= mean * mean.transpose();
-        cov  *= k/(k-1);
+        cov  *= Scalar(k)/Scalar(k-1);
         return k;
     }
 
@@ -86,7 +85,7 @@ namespace pr{
         // otherwise
         //   we move the point in the other extrema, and increment the extrema
         // the iterations end when the upper and lower ends match
-        auto upper=make_reverse_iterator(end); 
+        auto upper=std::make_reverse_iterator(end); 
         while (lower!=upper.base()) {
             ValueType& v_lower=*lower;
             ValueType& v_upper=*upper;
