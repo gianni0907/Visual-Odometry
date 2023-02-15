@@ -13,7 +13,7 @@ namespace vo{
     //return a camera object with parameters specified in camera.dat file
     Camera getCamera();
 
-    //read the ground truth trajectory from trajectory.dat file
+    //read the ground truth trajectory (x-y-theta) from trajectory.dat file
     Vector3fVector getGroundTruthTrajectory();
 
     //read the ground truth world points from world.dat file
@@ -21,5 +21,14 @@ namespace vo{
 
     //read all meas-XXXXX.dat files and store observations in a vector
     ObsVector getObservations();
+
+    //read the estimated trajectory (x-y-z)
+    Vector3fVector getEstimatedTrajectory();
+
+    //read the vector of estimated transformations expressing the robot in world
+    TransfVector getEstimatedPoses();
+
+    //read the estimated world points
+    Vector3fVector getEstimatedWorld();
 }
 

@@ -131,4 +131,72 @@ namespace vo{
         return observations;
     }
 
+    Vector3fVector getEstimatedTrajectory()
+    {
+        Vector3fVector trajectory(N_POSES);
+        ifstream indata;
+        float trash;
+        char* path=getenv("HOME");
+        int curr_pose=0;
+        indata.open(string(path) + "/Desktop/probrob_proj/estimation/est_trajectory.dat");
+        if(!indata){
+            cerr << "Error: est_trajectory.dat file could not be opened" << endl;
+            exit(1);
+        }
+        while(!indata.eof()){
+            indata >> trajectory[curr_pose].x()
+                   >> trajectory[curr_pose].y()
+                   >> trajectory[curr_pose].z();
+            curr_pose++;
+        }
+        indata.close();
+        return trajectory;
+    }
+
+    TransfVector getEstimatedPoses()
+    {
+        TransfVector est_pose(N_POSES);
+        int curr_pose=0;
+        ifstream indata;
+        char trash[100];
+        char* path=getenv("HOME");
+        indata.open(string(path) + "/Desktop/probrob_proj/estimation/est_pose.dat");
+        if(!indata){
+            cerr << "Error: est_pose.dat file could not be opened" << endl;
+            exit(1);
+        }
+        while(!indata.eof()){
+            for (int i=0;i<16;i++){
+                indata >> est_pose[curr_pose](i/4,i%4);
+            }
+            curr_pose++;
+            indata.getline(trash,100,'\n');
+        }
+        indata.close();
+        est_pose.resize(curr_pose-1);
+        return est_pose;
+    }
+
+    Vector3fVector getEstimatedWorld()
+    {
+        Vector3fVector est_points(N_POINTS);
+        int curr_point=0;
+        ifstream indata;
+        float trash;
+        char* path=getenv("HOME");
+        indata.open(string(path) + "/Desktop/probrob_proj/estimation/est_world.dat");
+        if(!indata){
+            cerr << "Error: est_world.dat file could not be opened" << endl;
+            exit(1);
+        }
+        while(!indata.eof()){
+            indata >> est_points[curr_point].x()
+                   >> est_points[curr_point].y()
+                   >> est_points[curr_point].z();
+            curr_point++;
+        }
+        indata.close();
+        est_points.resize(curr_point-1);
+        return est_points;
+    }
 }
