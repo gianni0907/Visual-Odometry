@@ -101,25 +101,8 @@ int main (int argc, char** argv){
                                                  img_points[0],
                                                  triang_points,
                                                  errors);
-    cout << "Number of triangulated points after first triangulation: " << num_triangulated_points[0] << endl; 
-    // //compare generated/triangulated [0 to 1] world_points
-    // computeWrld2WrldCorrespondences(world_corr,
-    //                                 world_points,
-    //                                 triang_points);
-    // cout <<"Compare generated/triangulated[0,1] world_points: " << num_triangulated_points[0] << ", ratio" << endl;
-    // for (const IntPair& corr: world_corr){
-    //     int wrl_idx=corr.second;
-    //     int tri_idx=corr.first;
-    //     cout << "[" << world_points[wrl_idx].p.x() <<
-    //             "," << world_points[wrl_idx].p.y() <<
-    //             "," << world_points[wrl_idx].p.z() <<
-    //             "]\t[" << triang_points[tri_idx].p.x() <<
-    //             "," << triang_points[tri_idx].p.y() <<
-    //             "," << triang_points[tri_idx].p.z() <<
-    //             "]\t[" << world_points[wrl_idx].p.x()/triang_points[tri_idx].p.x() <<
-    //             "," << world_points[wrl_idx].p.y()/triang_points[tri_idx].p.y() <<
-    //             "," << world_points[wrl_idx].p.z()/triang_points[tri_idx].p.z() << "]" << endl;
-    // }
+    cout << "Number of triangulated points after first triangulation: " << num_triangulated_points[0] << endl;
+    
     ////NOTE: PICP done considering pose of camera i-1 expressed in camera i
     //projective_icp
     //consider:
@@ -155,21 +138,7 @@ int main (int argc, char** argv){
                                                  img_points[1],
                                                  new_triang,
                                                  errors);
-    // //compare generated/triangulated[0,2] world_points
-    // computeWrld2WrldCorrespondences(world_corr,
-    //                                 world_points,
-    //                                 new_triang);
-    // cout <<"Compare generated/triangulated[0,2] world_points: " << num_triangulated_points[1] << endl;
-    // for (const IntPair& corr: world_corr){
-    //     int wrl_idx=corr.second;
-    //     int tri_idx=corr.first;
-    //     cout << "[" << world_points[wrl_idx].p.x() <<
-    //             "," << world_points[wrl_idx].p.y() <<
-    //             "," << world_points[wrl_idx].p.z() <<
-    //             "]\t[" << new_triang[tri_idx].p.x() <<
-    //             "," << new_triang[tri_idx].p.y() <<
-    //             "," << new_triang[tri_idx].p.z() << "]" << endl;
-    // }
+
     for (Point3d& point: triang_points){
         point.p=est_transf[1].linear()*point.p+est_transf[1].translation();
     }
@@ -181,47 +150,31 @@ int main (int argc, char** argv){
                 "," << point.p.y() <<
                 "," << point.p.z() << "]" << endl;
     }
-    // PICPSolver solver1;
-    // est_cameras[0].setWorldInCameraPose(init_X);
-    solver.init(est_camera,
+    PICPSolver solver1;
+    est_camera.setWorldInCameraPose(init_X);
+    solver1.init(est_camera,
                  merged_points,
                  img_points[1],
                  num_iterations,
                  keep_indices);
-    // solver1.setKernelThreshold(10000);
-    // solver1.run();
-    // est_cameras[0]=solver1.camera();
-    // est_transf[0]=est_cameras[0].worldInCameraPose();
-    // cout << "Estimated transformation with merged points:" << endl;
-    // cout << est_transf[0].linear() << endl << est_transf[0].translation() << endl;
-    // cout << endl;
-    // cout << "Ground truth/estimated transformation ratio:" << endl;
-    // for (int i=0;i<3;i++){
-    //     for (int j=0;j<4;j++)
-    //         cout << abs_transf[1](i,j)/est_transf[0](i,j) << " ";
-    //     cout << endl;
-    // }
-    // Points3dVector upd_triang;
-    // num_triangulated_points[2]=triangulatePoints(camera_matrix,
-    //                                              est_transf[0],
-    //                                              img_points[0],
-    //                                              img_points[1],
-    //                                              upd_triang,
-    //                                              errors);
-    // //compare generated/triangulated[0,1] world_points
-    // computeWrld2WrldCorrespondences(world_corr,
-    //                                 world_points,
-    //                                 upd_triang);
-    // cout <<"Compare generated/triangulated[0,1] world_points: " << num_triangulated_points[2] << endl;
-    // for (const IntPair& corr: world_corr){
-    //     int wrl_idx=corr.second;
-    //     int tri_idx=corr.first;
-    //     cout << "[" << world_points[wrl_idx].p.x() <<
-    //             "," << world_points[wrl_idx].p.y() <<
-    //             "," << world_points[wrl_idx].p.z() <<
-    //             "]\t[" << upd_triang[tri_idx].p.x() <<
-    //             "," << upd_triang[tri_idx].p.y() <<
-    //             "," << upd_triang[tri_idx].p.z() << "]" << endl;
-    // }
-
+    solver1.setKernelThreshold(10000);
+    solver1.run();
+    est_camera=solver1.camera();
+    est_transf[0]=est_camera.worldInCameraPose();
+    cout << "Estimated transformation with merged points:" << endl;
+    cout << est_transf[0].linear() << endl << est_transf[0].translation() << endl;
+    cout << endl;
+    cout << "Ground truth/estimated transformation ratio:" << endl;
+    for (int i=0;i<3;i++){
+        for (int j=0;j<4;j++)
+            cout << abs_transf[1](i,j)/est_transf[0](i,j) << " ";
+        cout << endl;
+    }
+    Points3dVector upd_triang;
+    num_triangulated_points[2]=triangulatePoints(camera_matrix,
+                                                 est_transf[0],
+                                                 img_points[0],
+                                                 img_points[1],
+                                                 upd_triang,
+                                                 errors);
 }

@@ -3,70 +3,6 @@
 namespace pr{
     using namespace std;
 
-    void computeImg2ImgCorrespondences(IntPairVector& correspondences,
-				                       const Points2dVector& img1_points,
-				                       const Points2dVector& img2_points){
-        correspondences.resize(min(img1_points.size(),img2_points.size()));
-        int num_correspondences=0;
-        Point2d reference_point,current_point;
-        for (size_t i=0; i<img1_points.size(); i++){
-            reference_point=img1_points[i];
-            for (size_t j=0; j<img2_points.size();j++){
-                current_point=img2_points[j];
-                if (reference_point.appearance==current_point.appearance && !(reference_point.p.x()<0 || current_point.p.x()<0)){
-                    correspondences[num_correspondences].first=i;
-                    correspondences[num_correspondences].second=j;
-                    num_correspondences++;
-                    break;
-                }
-            }
-        }
-        correspondences.resize(num_correspondences);
-    }
-
-    void computeWrld2ImgCorrespondences(IntPairVector& correspondences,
-				                        const Points3dVector& world_points,
-				                        const Points2dVector& img_points){
-        correspondences.resize(min(img_points.size(),world_points.size()));
-        int num_correspondences=0;
-        Point2d img_point;
-        Point3d world_point;
-        for (size_t i=0; i<img_points.size(); i++){
-            img_point=img_points[i];
-            for (size_t j=0; j<world_points.size();j++){
-                world_point=world_points[j];
-                if (img_point.appearance==world_point.appearance && !(img_point.p.x()<0)){
-                    correspondences[num_correspondences].first=j;
-                    correspondences[num_correspondences].second=i;
-                    num_correspondences++;
-                    break;
-                }
-            }
-        }
-        correspondences.resize(num_correspondences);
-    }
-
-    void computeWrld2WrldCorrespondences(IntPairVector& correspondences,
-				                         const Points3dVector& world1_points,
-				                         const Points3dVector& world2_points){
-        correspondences.resize(min(world1_points.size(),world2_points.size()));
-        int num_correspondences=0;
-        Point3d world1_point,world2_point;
-        for (size_t i=0; i<world1_points.size(); i++){
-            world1_point=world1_points[i];
-            for (size_t j=0; j<world2_points.size();j++){
-                world2_point=world2_points[j];
-                if (world1_point.appearance==world2_point.appearance){
-                    correspondences[num_correspondences].first=i;
-                    correspondences[num_correspondences].second=j;
-                    num_correspondences++;
-                    break;
-                }
-            }
-        }
-        correspondences.resize(num_correspondences);
-    }
-
     bool triangulatePoint(const Eigen::Vector3f& o2,
                           const Eigen::Vector3f& d1,
                           const Eigen::Vector3f& d2,
@@ -105,10 +41,15 @@ namespace pr{
         Eigen::Vector3f p1_cam,p2_cam,img1_3dpoint,img2_3dpoint;
         int num_success=0;
         bool success=false;
-        IntPairVector correspondences;
+        int max_points_leaf=20;
+        float radius=0.1;
 
         //compute correspondences between projected points
-        computeImg2ImgCorrespondences(correspondences, img1_points, img2_points);
+        CorrespondenceFinder corr_finder=CorrespondenceFinder<Points2dVector,Points2dVector>();
+        corr_finder.init(img1_points,max_points_leaf,radius);
+        corr_finder.compute(img2_points);
+        IntPairVector correspondences=corr_finder.correspondences();
+        
         points.resize(correspondences.size());
         errors.resize(correspondences.size());
 
@@ -143,10 +84,16 @@ namespace pr{
         Points3dVector merged_points=new_points;
         size_t num_points=merged_points.size();
         merged_points.resize(new_points.size()+points.size());
-        IntPairVector correspondences;
-        computeWrld2WrldCorrespondences(correspondences,new_points,points);
+        int max_points_leaf=20;
+        float radius=0.1;
+
+        //compute correspondences between projected points
+        CorrespondenceFinder corr_finder=CorrespondenceFinder<Points3dVector,Points3dVector>();
+        corr_finder.init(new_points,max_points_leaf,radius);
+        corr_finder.compute(points);
+        IntPairVector correspondences=corr_finder.correspondences();
         bool inside=false;
-        for (size_t i=0;i<points.size();i++){ //TODO: for on old points and see if they are in correspondences,otherwise you add them in merged_points
+        for (size_t i=0;i<points.size();i++){
             inside=false;
             for (const IntPair& corr: correspondences){
                 if (static_cast<int>(i)==corr.second){
@@ -155,9 +102,7 @@ namespace pr{
                 }
             }
             if (!inside){
-                merged_points[num_points].p=X*points[i].p;
-                merged_points[num_points].id=points[i].id;
-                merged_points[num_points].appearance=points[i].appearance;
+                merged_points[num_points]=Point3d(points[i].id,X*points[i].p,points[i].appearance);
                 num_points++;
             }
         }
@@ -259,10 +204,14 @@ namespace pr{
         Matrix3fPair T;
         Vector9f A,eig_vec;
         Eigen::Vector3f img1_3dpoint,img2_3dpoint;
-        IntPairVector correspondences;
+        int max_points_leaf=20;
+        float radius=0.1;
 
         //compute correspondences between projected points
-        computeImg2ImgCorrespondences(correspondences, img1_points, img2_points);
+        CorrespondenceFinder corr_finder=CorrespondenceFinder<Points2dVector,Points2dVector>();
+        corr_finder.init(img1_points,max_points_leaf,radius);
+        corr_finder.compute(img2_points);
+        IntPairVector correspondences=corr_finder.correspondences();
         size_t n_points=correspondences.size();
         //compute the normalization transform, one for each set of points
         T=normTransform(correspondences,img1_points,img2_points);

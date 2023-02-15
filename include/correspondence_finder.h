@@ -32,7 +32,7 @@ namespace pr{
             for (size_t i=0; i<current_points.size();i++){
                 Point p=Point(i,current_points[i].appearance);
                 Point* ref_point=_kdtree.bestMatchFast(p,_radius);
-                if (ref_point){
+                if (ref_point && !(current_points[i].p.size()==2 && current_points[i].p.x()<0)){
                     _correspondences[num_correspondences].first=(*ref_point).id;
                     _correspondences[num_correspondences].second=p.id;
                     num_correspondences++;

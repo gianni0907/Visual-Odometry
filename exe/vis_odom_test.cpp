@@ -30,10 +30,10 @@ int main (int argc, char** argv){
     //and also to save ground truth and estimated world (i.e. 3d points)
     ofstream out_gt,out_est,out_gt_wrld,out_est_wrld;
     char* path=getenv("HOME");
-    out_gt.open(string(path)+"/Desktop/probrob_proj/to_plot/gt_trajectory_noprune.dat");
-    out_est.open(string(path)+"/Desktop/probrob_proj/to_plot/est_trajectory_noprune.dat");
-    out_gt_wrld.open(string(path)+"/Desktop/probrob_proj/to_plot/gt_world.dat");
-    out_est_wrld.open(string(path)+"/Desktop/probrob_proj/to_plot/est_world.dat");
+    out_gt.open(string(path)+"/Desktop/probrob_proj/to_plot/gt_trajectory_da.dat");
+    out_est.open(string(path)+"/Desktop/probrob_proj/to_plot/est_trajectory_da.dat");
+    // out_gt_wrld.open(string(path)+"/Desktop/probrob_proj/to_plot/gt_world.dat");
+    // out_est_wrld.open(string(path)+"/Desktop/probrob_proj/to_plot/est_world.dat");
 
     //insert gt_world in file
     for (size_t i=0;i<gt_world.size();i++)

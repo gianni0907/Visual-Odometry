@@ -2,6 +2,7 @@
 #include "defs.h"
 #include "points_utils.h"
 #include "camera.h"
+#include "correspondence_finder.h"
 #include "epipolar.h"
 
 namespace pr {

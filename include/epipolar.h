@@ -1,25 +1,8 @@
 #pragma once
 #include "defs.h"
+#include "correspondence_finder.h"
 
 namespace pr{
-    //given two set of image points, returns the set of correspondences
-    //between the points on images representing the same point in world
-    void computeImg2ImgCorrespondences(IntPairVector& correspondences,
-				                       const Points2dVector& img1_points,
-				                       const Points2dVector& img2_points);
-
-    //given a set of world point and a set of points in image, returns the
-    //set of correspondences between points on image and points in world
-    void computeWrld2ImgCorrespondences(IntPairVector& correspondences,
-				                        const Points3dVector& world_points,
-				                        const Points2dVector& img_points);
-
-    //given two set of world_points, returns the set of correspondences
-    //between the same points, identified by id
-    void computeWrld2WrldCorrespondences(IntPairVector& correspondences,
-				                         const Points3dVector& world1_points,
-				                         const Points3dVector& world2_points);
-
     //triangulates a point given two lines
     //one passing through the origin, with direction d1
     //one passing through point o2, with direction d2

@@ -106,14 +106,27 @@ namespace pr {
 
   void PICPSolver::run(){
     Points2dVector current_image_points;
-    IntPairVector imgs_correspondences, wrld_correspondences;
+    IntPairVector imgs_correspondences,wrld_correspondences;
     const Eigen::Vector2f dimension=_camera.getDimension();
     char key=0;
     const char ESC_key=27;
+    int max_points_leaf=20;
+    float radius=0.1;
+    CorrespondenceFinder wrld_corr_finder=CorrespondenceFinder<Points3dVector,Points2dVector>();
+    wrld_corr_finder.init(*_world_points,max_points_leaf,radius);
+    wrld_corr_finder.compute(*_reference_image_points);
+    wrld_correspondences=wrld_corr_finder.correspondences();
+
+    //only for visualization on opencv
+    CorrespondenceFinder img_corr_finder=CorrespondenceFinder<Points2dVector,Points2dVector>();
+    img_corr_finder.init(*_reference_image_points,max_points_leaf,radius);  
+    //
+
     for (int i=0; i<_num_iterations && key!=ESC_key; i++){
+      //only for visualization on opencv
       _camera.projectPoints(current_image_points, *_world_points, _keep_indices);
-      computeImg2ImgCorrespondences(imgs_correspondences, *_reference_image_points, current_image_points);
-      computeWrld2ImgCorrespondences(wrld_correspondences, *_world_points, *_reference_image_points);
+      img_corr_finder.compute(current_image_points);
+      imgs_correspondences=img_corr_finder.correspondences();
       RGBImage shown_image(dimension(0),dimension(1));
       shown_image=cv::Vec3b(255,255,255);
       drawPoints(shown_image,*_reference_image_points,cv::Scalar(0,0,255),3);
@@ -125,6 +138,8 @@ namespace pr {
 		                      cv::Scalar(0,255,0));
       cv::imshow("picp_solver_test", shown_image);
       key=cv::waitKey(5);
+      //
+
       oneRound(wrld_correspondences,false);
     }
   }
