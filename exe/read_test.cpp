@@ -53,7 +53,7 @@ int main (int args, char** argv){
 
     //test est_pose.dat read
     TransfVector est_pose=getEstimatedPoses();
-    cout << est_pose[est_pose.size()-1].matrix() << endl;
+    cout << est_pose[N_POSES-1].matrix() << endl;
 
     //test est_world.dat read
     Vector3fVector est_points=getEstimatedWorld();

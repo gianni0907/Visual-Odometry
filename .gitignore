@@ -34,4 +34,4 @@
 # directories
 build/
 02-VisualOdometry/
-to_plot/
+estimation/

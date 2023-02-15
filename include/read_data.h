@@ -3,8 +3,9 @@
 #include <fstream>
 #include <cstdlib>
 #include <string>
-#include "defs.h"
 #include "camera.h"
+#include "defs.h"
+
 #define N_POINTS 1000
 #define N_POSES 121
 

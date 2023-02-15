@@ -114,45 +114,45 @@ namespace vo {
         return es.eigenvectors().col(0);
     }
 
-    inline Eigen::Matrix3f skew(const Eigen::Vector3f& v){
-        Eigen::Matrix3f S;
+    inline Matrix3f skew(const Vector3f& v){
+        Matrix3f S;
         S << 0, -v[2], v[1],
              v[2], 0, -v[0],
              -v[1], v[0], 0;
         return S;
     }
 
-    inline Eigen::Matrix3f Rx(float rot_x){
+    inline Matrix3f Rx(float rot_x){
         float c=cos(rot_x);
         float s=sin(rot_x);
-        Eigen::Matrix3f R;
+        Matrix3f R;
         R << 1,  0, 0,
              0,  c,  -s,
              0,  s,  c;
         return R;
     }
   
-    inline Eigen::Matrix3f Ry(float rot_y){
+    inline Matrix3f Ry(float rot_y){
         float c=cos(rot_y);
         float s=sin(rot_y);
-        Eigen::Matrix3f R;
+        Matrix3f R;
         R << c,  0,  s,
              0 , 1,  0,
              -s,  0, c;
         return R;
     }
 
-    inline Eigen::Matrix3f Rz(float rot_z){
+    inline Matrix3f Rz(float rot_z){
         float c=cos(rot_z);
         float s=sin(rot_z);
-        Eigen::Matrix3f R;
+        Matrix3f R;
         R << c,  -s,  0,
              s,  c,  0,
              0,  0,  1;
         return R;
     }
 
-    inline Eigen::Isometry3f v2t_aug(const Eigen::Vector3f& t){
+    inline Eigen::Isometry3f v2t_aug(const Vector3f& t){
         Eigen::Isometry3f T;
         T.setIdentity();
         T.translation() << t(0), t(1), 0;
@@ -164,8 +164,8 @@ namespace vo {
         return T;
     }
 
-    inline Eigen::Vector3f t2v(const Eigen::Isometry3f& t){
-        Eigen::Vector3f v;
+    inline Vector3f t2v(const Eigen::Isometry3f& t){
+        Vector3f v;
         v(0)=t.translation().x();
         v(1)=t.translation().y();
         v(2) = atan2(t.linear()(1,0), t.linear()(0,0));

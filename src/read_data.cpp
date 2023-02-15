@@ -135,7 +135,6 @@ namespace vo{
     {
         Vector3fVector trajectory(N_POSES);
         ifstream indata;
-        float trash;
         char* path=getenv("HOME");
         int curr_pose=0;
         indata.open(string(path) + "/Desktop/probrob_proj/estimation/est_trajectory.dat");
@@ -182,7 +181,6 @@ namespace vo{
         Vector3fVector est_points(N_POINTS);
         int curr_point=0;
         ifstream indata;
-        float trash;
         char* path=getenv("HOME");
         indata.open(string(path) + "/Desktop/probrob_proj/estimation/est_world.dat");
         if(!indata){

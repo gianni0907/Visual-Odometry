@@ -9,16 +9,13 @@ using namespace vo;
 
 int main (int argc, char** argv){
     //Initialization from files
-    Points3dVector gt_world=getWorld();
     Camera cam=getCamera();
     Eigen::Matrix3f K=cam.cameraMatrix();
     Eigen::Isometry3f cam_in_rob=cam.camInRobPose();
     ObsVector measurements=getObservations();
-    Vector3fVector trajectory=getGroundTruthTrajectory();
     
     //Instantiate useful variables
     Eigen::Isometry3f est_transf=Eigen::Isometry3f::Identity();
-    Eigen::Isometry3f gt_rob_pose=Eigen::Isometry3f::Identity();
     Eigen::Isometry3f est_rob_pose=Eigen::Isometry3f::Identity();
     int num_iterations=20;
     const bool keep_indices=false;
@@ -30,23 +27,29 @@ int main (int argc, char** argv){
     
     //Instantiate file handlers to write ground truth and estimated robot trajectory in files
     //and also to save ground truth and estimated world (i.e. 3d points)
-    ofstream out_gt,out_est,out_gt_wrld,out_est_wrld;
+    ofstream out_est_traj,out_est_wrld,out_est_pose;
     char* path=getenv("HOME");
-    out_gt.open(string(path)+"/Desktop/probrob_proj/to_plot/gt_trajectory_da.dat");
-    out_est.open(string(path)+"/Desktop/probrob_proj/to_plot/est_trajectory_da.dat");
-    // out_gt_wrld.open(string(path)+"/Desktop/probrob_proj/to_plot/gt_world.dat");
-    // out_est_wrld.open(string(path)+"/Desktop/probrob_proj/to_plot/est_world.dat");
-
-    //insert gt_world in file
-    for (size_t i=0;i<gt_world.size();i++)
-        out_gt_wrld << gt_world[i].p.transpose() << endl;
-
-    //read the first gt_pose robot pose and store it for plots
-    gt_rob_pose=v2t_aug(measurements[0].gt_pose);
-    out_gt << gt_rob_pose.translation().transpose() << endl;
-
-    //save the first estimated robot pose (identity) for plots
-    out_est << est_rob_pose.translation().transpose() << endl;
+    out_est_traj.open(string(path)+"/Desktop/probrob_proj/estimation/est_trajectory.dat");
+    if(!indata){
+        cerr << "Error: est_trajectory.dat file could not be opened" << endl;
+        exit(1);
+    }
+    out_est_wrld.open(string(path)+"/Desktop/probrob_proj/estimation/est_world.dat");
+    if(!indata){
+        cerr << "Error: est_world.dat file could not be opened" << endl;
+        exit(1);
+    }
+    out_est_pose.open(string(path)+"/Desktop/probrob_proj/estimation/est_pose.dat");
+    if(!indata){
+        cerr << "Error: est_pose.dat file could not be opened" << endl;
+        exit(1);
+    }
+    //save the first estimated robot pose (identity)
+    //each time store: 
+    //  -the whole estimated Isometry3f in a file, for evaluation
+    //  -the x-y position and theta angle in another file, to ease the trajectory plotting
+    out_est_traj << est_rob_pose.translation().transpose() << endl;
+    out_est_pose << est_rob_pose.matrix() << endl << endl;
 
     //estimate the transformation (cam0 in cam1 frame)
     //considering first pair of measurements
@@ -57,26 +60,10 @@ int main (int argc, char** argv){
     cout << est_transf.matrix() << endl;
     cout << "#######################################" << endl;
     
-    //Extract the gt robot in world pose and store it
-    gt_rob_pose=v2t_aug(measurements[1].gt_pose);
-    out_gt << gt_rob_pose.translation().transpose() << endl;
     //Find the estimated robot in world pose and store it
     est_rob_pose=cam_in_rob*est_transf.inverse()*cam_in_rob.inverse();
-    out_est << est_rob_pose.translation().transpose() << endl;
-
-    // uncomment to compare GT vs ESTIMATED rob in world transformation
-    // cout << "Ground truth transformation rob in world:" << endl;
-    // cout << gt_rob_pose.linear() << endl << gt_rob_pose.translation() << endl;
-    // cout << endl;
-    // cout << "Estimated transformation rob in world:" << endl;
-    // cout << est_rob_pose.linear() << endl << est_rob_pose.translation() << endl;
-    // cout << endl;
-    // cout << "Ground truth/estimated transformation ratio:" << endl;
-    // for (int i=0;i<3;i++){
-    //     for (int j=0;j<4;j++)
-    //         cout << gt_rob_pose(i,j)/est_rob_pose(i,j) << " ";
-    //     cout << endl;
-    // }
+    out_est_traj << est_rob_pose.translation().transpose() << endl;
+    out_est_pose << est_rob_pose.matrix() << endl << endl;
 
     //triangulate points, expressing them in the cam1 frame
     num_triangulated_points=triangulatePoints(K,
@@ -109,26 +96,10 @@ int main (int argc, char** argv){
         cout << "Error (inliers): " << solver.chiInliers() << endl;
         cout << "#######################################" <<endl;
 
-        //Extract the gt robot in world pose and save
-        gt_rob_pose=v2t_aug(measurements[i+1].gt_pose);
-        out_gt << gt_rob_pose.translation().transpose() << endl;
         //Find the estimated robot in world pose and save
         est_rob_pose=est_rob_pose*cam_in_rob*est_transf.inverse()*cam_in_rob.inverse();
-        out_est << est_rob_pose.translation().transpose() << endl;
-
-        // uncomment to compare GT vs ESTIMATED rob in world transformation
-        // cout << "Ground truth transformation rob in world:" << endl;
-        // cout << gt_rob_pose.linear() << endl << gt_rob_pose.translation() << endl;
-        // cout << endl;
-        // cout << "Estimated transformation rob in world:" << endl;
-        // cout << est_rob_pose.linear() << endl << est_rob_pose.translation() << endl;
-        // cout << endl;
-        // cout << "Ground truth/estimated transformation ratio:" << endl;
-        // for (int i=0;i<3;i++){
-        //     for (int j=0;j<4;j++)
-        //         cout << gt_rob_pose(i,j)/est_rob_pose(i,j) << " ";
-        //     cout << endl;
-        // }
+        out_est_traj << est_rob_pose.translation().transpose() << endl;
+        out_est_pose << est_rob_pose.matrix() << endl << endl;
 
         //triangulate the points on the considered images and with the estimated transformation,
         //obtain a new set of triangulated points expressed in cam i+1
@@ -150,8 +121,7 @@ int main (int argc, char** argv){
         est_world_point=est_rob_pose*cam_in_rob*curr_3dpoints[i].p;
         out_est_wrld << est_world_point.transpose() << endl;
     }
-    out_gt.close();
-    out_est.close();
-    out_gt_wrld.close();
+    out_est_traj.close();
+    out_est_pose.close();
     out_est_wrld.close();
 }

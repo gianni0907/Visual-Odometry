@@ -60,3 +60,10 @@ add_executable(kdtree_test kdtree_test.cpp
     ../src/read_data.cpp
 )
 target_link_libraries(kdtree_test opencv_highgui)
+
+#ds evaluation_test: comparison between obtained result and ground truth
+add_executable(evaluation_test evaluation_test.cpp
+    ../src/read_data.cpp
+    ../src/camera.cpp
+)
+target_link_libraries(evaluation_test opencv_highgui)
