@@ -30,6 +30,6 @@ namespace vo{
     TransfVector getEstimatedPoses();
 
     //read the estimated world points
-    Vector3fVector getEstimatedWorld();
+    Points3dVector getEstimatedWorld();
 }
 

@@ -56,7 +56,7 @@ int main (int args, char** argv){
     cout << est_pose[N_POSES-1].matrix() << endl;
 
     //test est_world.dat read
-    Vector3fVector est_points=getEstimatedWorld();
+    Points3dVector est_points=getEstimatedWorld();
     for (size_t i=0;i<est_points.size();i++)
-        cout << est_points[i].transpose() << endl;
+        cout << est_points[i].id << "\t" << est_points[i].p.transpose() << endl;
 }

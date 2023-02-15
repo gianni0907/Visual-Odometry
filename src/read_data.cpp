@@ -176,9 +176,9 @@ namespace vo{
         return est_pose;
     }
 
-    Vector3fVector getEstimatedWorld()
+    Points3dVector getEstimatedWorld()
     {
-        Vector3fVector est_points(N_POINTS);
+        Points3dVector est_points(N_POINTS);
         int curr_point=0;
         ifstream indata;
         char* path=getenv("HOME");
@@ -188,9 +188,12 @@ namespace vo{
             exit(1);
         }
         while(!indata.eof()){
-            indata >> est_points[curr_point].x()
-                   >> est_points[curr_point].y()
-                   >> est_points[curr_point].z();
+            indata >> est_points[curr_point].id;
+            indata >> est_points[curr_point].p.x()
+                   >> est_points[curr_point].p.y()
+                   >> est_points[curr_point].p.z();
+            for (int i=0;i<est_points[curr_point].appearance.size();i++)
+                indata >> est_points[curr_point].appearance(i);
             curr_point++;
         }
         indata.close();

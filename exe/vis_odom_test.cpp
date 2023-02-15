@@ -30,17 +30,17 @@ int main (int argc, char** argv){
     ofstream out_est_traj,out_est_wrld,out_est_pose;
     char* path=getenv("HOME");
     out_est_traj.open(string(path)+"/Desktop/probrob_proj/estimation/est_trajectory.dat");
-    if(!indata){
+    if(!out_est_traj){
         cerr << "Error: est_trajectory.dat file could not be opened" << endl;
         exit(1);
     }
     out_est_wrld.open(string(path)+"/Desktop/probrob_proj/estimation/est_world.dat");
-    if(!indata){
+    if(!out_est_wrld){
         cerr << "Error: est_world.dat file could not be opened" << endl;
         exit(1);
     }
     out_est_pose.open(string(path)+"/Desktop/probrob_proj/estimation/est_pose.dat");
-    if(!indata){
+    if(!out_est_pose){
         cerr << "Error: est_pose.dat file could not be opened" << endl;
         exit(1);
     }
@@ -116,10 +116,9 @@ int main (int argc, char** argv){
     }
 
     //express estimated world points in world frame and save them in file
-    Eigen::Vector3f est_world_point;
-    for (size_t i=0;i<curr_3dpoints.size();i++){
-        est_world_point=est_rob_pose*cam_in_rob*curr_3dpoints[i].p;
-        out_est_wrld << est_world_point.transpose() << endl;
+    for (auto& point: curr_3dpoints){
+        Point3d world_point(point.id,est_rob_pose*cam_in_rob*point.p,point.appearance);
+        out_est_wrld << world_point.id << "\t" << world_point.p.transpose() << "\t" << world_point.appearance.transpose() << endl;
     }
     out_est_traj.close();
     out_est_pose.close();
