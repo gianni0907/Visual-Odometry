@@ -39,7 +39,7 @@ int main (int argc, char** argv) {
   //Consider a ground truth pose of the world wrt cam
   //this is what we want to estimate via projective_icp
   Eigen::Isometry3f gt_X=Eigen::Isometry3f::Identity();
-  gt_X.linear()=Rz(0.35);
+  gt_X.linear()=Rz(0.6);
   gt_X.translation()=Eigen::Vector3f(-2.0f, 1.7f, 0.0f);
   cout << "Ground truth transformation:" << endl;
   cout << gt_X.linear() << endl << gt_X.translation() << endl;

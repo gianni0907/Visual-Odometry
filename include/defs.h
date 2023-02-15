@@ -38,7 +38,11 @@ namespace pr {
         int id;
         Vector3f p;
         Vector10f appearance;
-
+        Point3d(){
+            id=-1;
+            p.setZero();
+            appearance.setZero();
+        }
         Point3d(int id_,Vector3f p_, Vector10f a_){
             id=id_;
             p=p_;
@@ -50,6 +54,11 @@ namespace pr {
         int id;
         Vector2f p;
         Vector10f appearance;
+        Point2d(){
+            id=-1;
+            p.setZero();
+            appearance.setZero();
+        }
         Point2d(int id_,Vector2f p_, Vector10f a_){
             id=id_;
             p=p_;
@@ -60,6 +69,10 @@ namespace pr {
     typedef struct Point{
         int id;
         Vector10f appearance;
+        Point(){
+            id=-1;
+            appearance.setZero();
+        }
         Point(int id_, Vector10f a_){
             id=id_;
             appearance=a_;

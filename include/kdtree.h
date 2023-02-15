@@ -14,7 +14,11 @@ namespace pr{
         using ThisType  = TreeNode_<IteratorType>;
         using PtrType = std::unique_ptr < ThisType  >;
         using AnswerType = std::vector<PointType* >;
-  
+
+        TreeNode_(){
+            _mean.setZero();
+            _normal.setZero();
+        }
         TreeNode_(IteratorType begin_,
                   IteratorType end_,
                   int max_points_in_leaf=20):

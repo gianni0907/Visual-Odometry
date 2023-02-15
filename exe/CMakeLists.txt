@@ -51,12 +51,12 @@ add_executable(vis_odom_test vis_odom_test.cpp
 )
 target_link_libraries(vis_odom_test opencv_highgui)
 
-# #ds kdtree_test: test the correspondence_finder with kdtree
-# add_executable(kdtree_test kdtree_test.cpp
-#     ../src/points_utils.cpp
-#     ../src/camera.cpp
-#     ../src/epipolar.cpp
-#     ../src/projective_icp.cpp
-#     ../src/read_data.cpp
-# )
-# target_link_libraries(kdtree_test opencv_highgui)
+#ds kdtree_test: test the correspondence_finder with kdtree
+add_executable(kdtree_test kdtree_test.cpp
+    ../src/points_utils.cpp
+    ../src/camera.cpp
+    ../src/epipolar.cpp
+    ../src/projective_icp.cpp
+    ../src/read_data.cpp
+)
+target_link_libraries(kdtree_test opencv_highgui)
