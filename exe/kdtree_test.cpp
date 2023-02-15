@@ -18,10 +18,13 @@ int main(int argc, char** argv){
     Vector3fVector trajectory=getGroundTruthTrajectory();
     int max_points_leaf=20;
     float radius=0.1;
-    CorrespondenceFinder corr_finder=CorrespondenceFinder<Points2dVector,Points3dVector>();
+    CorrespondenceFinder corr_finder=CorrespondenceFinder<Points2dVector,Points2dVector>();
     corr_finder.init(measurements[0].points,max_points_leaf,radius);
-    corr_finder.compute(gt_world);
+    corr_finder.compute(measurements[1].points);
     IntPairVector corr=corr_finder.correspondences();  
     cout << corr.size() << endl;
+    for (size_t i=0;i<corr.size();i++){
+        cout << corr[i].first << "\t" << corr[i].second << endl;
+    }
     return 0;
 }

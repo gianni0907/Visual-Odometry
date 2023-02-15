@@ -21,7 +21,7 @@ namespace pr{
             _max_points_in_leaf=max_points_in_leaf;
             _reference_points.resize(reference_points.size());
             for (size_t i=0;i<reference_points.size();i++)
-                _reference_points[i]=Point(reference_points[i].id,reference_points[i].appearance);
+                _reference_points[i]=Point(i,reference_points[i].appearance);
             
             _kdtree = TreeNode_(_reference_points.begin(),_reference_points.end(),_max_points_in_leaf);
         }
@@ -29,8 +29,8 @@ namespace pr{
         void compute(const Container2Type& current_points){
             _correspondences.resize(current_points.size());
             int num_correspondences=0;
-            for (auto& curr_p: current_points){
-                Point p=Point(curr_p.id,curr_p.appearance);
+            for (size_t i=0; i<current_points.size();i++){
+                Point p=Point(i,current_points[i].appearance);
                 Point* ref_point=_kdtree.bestMatchFast(p,_radius);
                 if (ref_point){
                     _correspondences[num_correspondences].first=(*ref_point).id;

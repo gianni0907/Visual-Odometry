@@ -66,6 +66,8 @@ namespace pr {
         }
     } Point2d;
 
+    /// NOTE: the id field in the Point struct is different from the field in Point2d and Point3d
+    //        here it is the idx of the corresponding Point in the vector, used only for data associaiton via kdtree
     typedef struct Point{
         int id;
         Vector10f appearance;
