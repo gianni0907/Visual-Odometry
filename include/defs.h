@@ -8,8 +8,9 @@
 #include "opencv2/opencv.hpp"
 #include <iostream>
 #include <unistd.h>
+#include <sys/time.h>
 
-namespace pr {
+namespace vo {
     typedef Eigen::Matrix<float, 2, 1> Vector2f;
     typedef Eigen::Matrix<float, 3, 1> Vector3f;
     typedef Eigen::Matrix<float, 6, 1> Vector6f;
@@ -177,5 +178,12 @@ namespace pr {
         T.translation()=v.head<3>();
         return T;
     }
+
+    inline double getTime(){
+        struct timeval tv;
+        gettimeofday(&tv,0);
+        return 1e3*tv.tv_sec+tv.tv_usec*1e-3;
+    }
+
 }
 

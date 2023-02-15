@@ -1,6 +1,6 @@
 #include "camera.h"
 
-namespace pr {
+namespace vo {
     Camera::Camera(int height,
                    int width,
                    float z_near,

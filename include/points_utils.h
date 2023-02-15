@@ -1,7 +1,7 @@
 #pragma once
 #include "defs.h"
 
-namespace pr {
+namespace vo {
     // create a random world of 3d points
     void makeWorld(Points3dVector& world_points,
                    const Eigen::Vector3f& lower_left_bottom,

@@ -5,7 +5,7 @@
 #include "correspondence_finder.h"
 #include "epipolar.h"
 
-namespace pr {
+namespace vo {
 
   /**
      Solver for point-to-camera problem.

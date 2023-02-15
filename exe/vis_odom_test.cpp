@@ -5,7 +5,7 @@
 #include "read_data.h"
 
 using namespace std;
-using namespace pr;
+using namespace vo;
 
 int main (int argc, char** argv){
     //Initialization from files
@@ -25,6 +25,8 @@ int main (int argc, char** argv){
     Points3dVector curr_3dpoints;
     vector<float> errors;
     int num_triangulated_points=0;
+    double t_start_solve=0;
+    double t_end_solve=0;
     
     //Instantiate file handlers to write ground truth and estimated robot trajectory in files
     //and also to save ground truth and estimated world (i.e. 3d points)
@@ -49,8 +51,8 @@ int main (int argc, char** argv){
     //estimate the transformation (cam0 in cam1 frame)
     //considering first pair of measurements
     est_transf=estimateTransform(K,
-                                    measurements[0].points,
-                                    measurements[1].points);
+                                 measurements[0].points,
+                                 measurements[1].points);
     cout << "Estimated transformation cam0 in cam1:" << endl;
     cout << est_transf.matrix() << endl;
     cout << "#######################################" << endl;
@@ -91,6 +93,7 @@ int main (int argc, char** argv){
     //at i-th iteration of picp we estimate cam(i) pose in cam(i+1)
     for (int i=1; i<N_POSES-1;i++){
         cam.setWorldInCameraPose(init_X);
+        t_start_solve=getTime();
         solver.init(cam,
                     curr_3dpoints,
                     measurements[i+1].points,
@@ -99,8 +102,11 @@ int main (int argc, char** argv){
         solver.setKernelThreshold(10000);
         solver.run();
         est_transf=solver.camera().worldInCameraPose();
+        t_end_solve=getTime();
         cout << "Estimated transformation cam" << i << " in cam" << i+1 << " : " << endl;
         cout << est_transf.matrix() << endl;
+        cout << "Solve tooks: " << (t_end_solve-t_start_solve) << "ms" << endl;
+        cout << "Error (inliers): " << solver.chiInliers() << endl;
         cout << "#######################################" <<endl;
 
         //Extract the gt robot in world pose and save

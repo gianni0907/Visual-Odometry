@@ -2,7 +2,7 @@
 #include "defs.h"
 #include "correspondence_finder.h"
 
-namespace pr{
+namespace vo{
     //triangulates a point given two lines
     //one passing through the origin, with direction d1
     //one passing through point o2, with direction d2

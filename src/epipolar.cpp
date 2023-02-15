@@ -1,6 +1,6 @@
 #include "epipolar.h"
 
-namespace pr{
+namespace vo{
     using namespace std;
 
     bool triangulatePoint(const Eigen::Vector3f& o2,

@@ -1,7 +1,7 @@
 #pragma once
 #include "defs.h"
 
-namespace pr {
+namespace vo {
     class Camera{
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW;

@@ -3,7 +3,7 @@
 #include "defs.h"
 #include "kdtree_utils.h"
 
-namespace pr{
+namespace vo{
     template <typename IteratorType_>
     class TreeNode_ {
     public:

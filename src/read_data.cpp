@@ -1,6 +1,6 @@
 #include "read_data.h"
 
-namespace pr{
+namespace vo{
     using namespace std;
 
     Camera getCamera(){

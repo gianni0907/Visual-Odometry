@@ -1,6 +1,6 @@
 #include "projective_icp.h"
 
-namespace pr {
+namespace vo {
   
   PICPSolver::PICPSolver(){
     _world_points=0;

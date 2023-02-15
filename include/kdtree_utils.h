@@ -1,7 +1,7 @@
 #pragma once
 #include "defs.h"
 
-namespace pr{
+namespace vo{
     template <typename IteratorType_>
     int bruteForceSearch(std::vector<typename IteratorType_::value_type*>& answers,
                          IteratorType_ begin,

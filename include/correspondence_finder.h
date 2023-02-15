@@ -1,7 +1,7 @@
 #pragma once
 #include "kdtree.h"
 
-namespace pr{
+namespace vo{
     template <typename Container1Type_, typename Container2Type_>
     class CorrespondenceFinder{
     public:

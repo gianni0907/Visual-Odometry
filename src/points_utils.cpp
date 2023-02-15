@@ -1,6 +1,6 @@
 #include "points_utils.h"
 
-namespace pr {
+namespace vo {
     using namespace std;
 
     void makeWorld(Points3dVector& world_points,

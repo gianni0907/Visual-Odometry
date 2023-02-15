@@ -4,7 +4,7 @@
 #include "projective_icp.h"
 
 using namespace std;
-using namespace pr;
+using namespace vo;
 
 int main (int argc, char** argv){
     Points3dVector world_points;

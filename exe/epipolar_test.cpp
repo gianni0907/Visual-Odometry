@@ -3,7 +3,7 @@
 #include "epipolar.h"
 
 using namespace std;
-using namespace pr;
+using namespace vo;
 
 int main(int argc, char** argv){
 

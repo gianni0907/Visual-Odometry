@@ -8,7 +8,7 @@
 #define N_POINTS 1000
 #define N_POSES 121
 
-namespace pr{
+namespace vo{
 
     //return a camera object with parameters specified in camera.dat file
     Camera getCamera();
