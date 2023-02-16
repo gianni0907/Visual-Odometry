@@ -4,14 +4,14 @@ Given as input the camera parameters and an image sequence (observations), the a
 ## Data Structures
 ### Points
 In order to properly handle all the informations related to world points (3d) or projected points (2d), I create the following structs:
-- Point3d, with fields: id (int), p (3d float vector storing the point coordinates), appearance (10d float vector);
-- Point2d, with fields: id (int), p (2d float vector storing the point coordinates), appearance (10d float vector);
+- Point3d, with fields: id (int), p (3d float vector storing the point coordinates), appearance (10d float vector)
+- Point2d, with fields: id (int), p (2d float vector storing the point coordinates), appearance (10d float vector)
 Note that in both cases the id field is stored only for completeness, it is never used in the project.
 ### Observations
 Moreover, each image of the input sequence is stored in the following struct:
 - Observations, with fields: 
     gt_pose (3d float vector storing ground truth x-y position and theta angle);
-    points (vector of Points2d elements, containing all the image points related to the observation);
+    points (vector of Points2d elements, containing all the image points related to the observation)
 Also in this struct, the gt_pose is not used in the project, it is considered only for evaluation.
 ### Camera parameters
 The camera parameters given in input are stored as attributes of a Camera object. They are:
@@ -46,19 +46,19 @@ At the end of i-th PICP iteration:
     git clone https://github.com/gianni0907/prob_rob_proj <directory>
 
 - On the system console, go in `<directory>` folder and execute build sequence:
-
+```
     mkdir build
     cd build
     cmake ..
     make
-
+```
 ## Execution
 The following 8 binaries are created in the `<directory>/build/exe` folder.
 The first 4 are realized on synthetic data:
 - `./cam_test`: to test projection function of the implemented pinhole camera model
 - `./epipolar_test`: to test epipolar geometry functions
 - `./picp_test`: to test the least squares solver
-- `./complete_test`: to test the sequence of registration step via epipolar     geometry and then first projective icp run
+- `./complete_test`: to test the sequence of registration step via epipolar geometry and then first projective icp run
 Then, the remaining 4 binaries treat real data:
 - `./read_test`: to test the reading of real data from files
 - `./kdtree_test`: to test the correspondence finding algorithm based on KD-Trees
