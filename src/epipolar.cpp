@@ -129,14 +129,14 @@ namespace vo{
         skew_t1=R1*E;
         skew_t2=R2*E;
         X1.linear()=R1;
-        X1.translation() << skew_t1(2,1),//-skew_t1(1,2),
-                            skew_t1(0,2),//-skew_t1(2,0),
-                            skew_t1(1,0);//-skew_t1(0,1);
+        X1.translation() << skew_t1(2,1),
+                            skew_t1(0,2),
+                            skew_t1(1,0);
         
         X2.linear()=R2;
-        X2.translation() << skew_t2(2,1),//-skew_t2(1,2),
-                            skew_t2(0,2),//-skew_t2(2,0),
-                            skew_t2(1,0);//-skew_t2(0,1);
+        X2.translation() << skew_t2(2,1),
+                            skew_t2(0,2),
+                            skew_t2(1,0);
     }
 
     const Eigen::Matrix3f transform2essential(const Eigen::Isometry3f& X){

@@ -11,25 +11,31 @@
 
 namespace vo{
 
-    //return a camera object with parameters specified in camera.dat file
+    /// @param dataset: the dataset folder path 
+    /// @return: a camera object with parameters specified in camera.dat file
     Camera getCamera(std::filesystem::path& dataset);
 
-    //read the ground truth trajectory (x-y-theta) from trajectory.dat file
+    /// @param dataset: the dataset folder path 
+    /// @return: the ground truth trajectory (x-y-theta) read from trajectory.dat file
     Vector3fVector getGroundTruthTrajectory(std::filesystem::path& dataset);
 
-    //read the ground truth world points from world.dat file
+    /// @param dataset: the dataset folder path 
+    /// @return: the ground truth world points read from world.dat file
     Points3dVector getWorld(std::filesystem::path& dataset);
 
-    //read all meas-XXXXX.dat files and store observations in a vector
+    //read 
+
+    /// @param dataset: the dataset folder path
+    /// @return: all the observations read from all meas-XXXXX.dat files 
     ObsVector getObservations(std::filesystem::path& dataset);
 
-    //read the estimated trajectory (x-y-z)
+    /// @return: the estimated trajectory (x-y-z) 
     Vector3fVector getEstimatedTrajectory();
 
-    //read the vector of estimated transformations expressing the robot in world
+    /// @return: the vector of estimated transformations expressing the robot in world
     TransfVector getEstimatedPoses();
 
-    //read the estimated world points
+    /// @return: the estimated world points
     Points3dVector getEstimatedWorld();
 }
 

@@ -180,6 +180,7 @@ namespace vo {
         return T;
     }
 
+    //return the current time in milliseconds
     inline double getTime(){
         struct timeval tv;
         gettimeofday(&tv,0);

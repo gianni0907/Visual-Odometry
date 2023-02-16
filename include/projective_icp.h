@@ -14,11 +14,12 @@ namespace vo {
      To use it:
      - create an object
      - initialize it passing:
-       - the image points (that represent the measurements)
-       - the world points (that represent the model)
        - A camera whose pose is initialized at initial_guess
-     - call oneRound(<correspondences>) a bunch of times, with the correspondences returned by the finder;
-       at each call, the solution will be subject to one ls operation
+       - the world points (that represent the model)
+       - the image points (that represent the measurements)
+       - the number of iterations for ICP
+       - the boolean to specify if the indices are kept or not
+     - call run() function to run the PICP machinery
    */
   class PICPSolver{
   public:
@@ -31,6 +32,8 @@ namespace vo {
     //! @param camera: the camera
     //! @param world_points: the points of the world
     //! @param image_points: the points of the reference
+    /// @param num_iterations: number of iterations of ICP procedure
+    /// @param keep_indices: boolean to specify if the indices are kept or not
     void init(const Camera& camera,
 	            const Points3dVector& world_points,
 	            const Points2dVector& image_points,
@@ -58,7 +61,7 @@ namespace vo {
     
     //! performs one iteration of optimization
     //! @param correspondences: the correspondences (first: measurement, second:model);
-    //! param keep_outliers: if true, the outliers are considered in the optimization 
+    //! @param keep_outliers: if true, the outliers are considered in the optimization 
     //! (but cut by the kernel)
     bool oneRound(const IntPairVector& correspondences, bool keep_outliers);
 

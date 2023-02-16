@@ -121,7 +121,6 @@ namespace vo {
     CorrespondenceFinder img_corr_finder=CorrespondenceFinder<Points2dVector,Points2dVector>();
     img_corr_finder.init(*_reference_image_points,max_points_leaf,radius);  
     //
-
     for (int i=0; i<_num_iterations && key!=ESC_key; i++){
       //only for visualization on opencv
       _camera.projectPoints(current_image_points, *_world_points, _keep_indices);
@@ -139,7 +138,6 @@ namespace vo {
       cv::imshow("picp_solver_test", shown_image);
       key=cv::waitKey(5);
       //
-
       oneRound(wrld_correspondences,false);
     }
   }

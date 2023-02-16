@@ -2,11 +2,20 @@
 #include "defs.h"
 
 namespace vo {
+    /**
+        simple pinhole camera class
+        Has
+        - the position (world with respect to camers)
+        - the camera matrix
+        - the size of the image plane in pixels
+        Supports simple projection operations
+    */
     class Camera{
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
     
-        //ctor
+        //~ ctor, initialize a camera according to the arguments
+        /// here I add also the pose of the camera in robot frame
         Camera(int height=100,
                int width=100,
                float z_near=0,
@@ -15,7 +24,8 @@ namespace vo {
                const Eigen::Isometry3f& world_in_cam_pose=Eigen::Isometry3f::Identity(),
                const Eigen::Isometry3f& cam_in_rob_pose=Eigen::Isometry3f::Identity());
 
-        // project a single point on the image plane
+        //! projects a single point on the image plane
+        //! @returns false if the point is outside the camera view frustrum
         inline bool projectPoint(Eigen::Vector2f& img_point,
                                  const Eigen::Vector3f& world_point){
             Eigen::Vector3f camera_point=_world_in_cam_pose*world_point;
@@ -31,7 +41,12 @@ namespace vo {
             return true;
         }    
 
-        // project the world points on the image plane
+        //! project the world points on the image plane
+        /// @param img_points: the points on the image
+        /// @param world_points: the input world points
+        /// @param keep_indices: if true, img_points has the same size of world points
+        /// Invalid points are marked with (-1, -1). If false only the points in the set are returned
+        /// @return the number of points that fall inside the image
         int projectPoints(Points2dVector& img_points,
                           const Points3dVector& world_points,
                           bool keep_indices=false);

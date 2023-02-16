@@ -50,7 +50,7 @@ int main (int argc, char** argv){
     //save the first estimated robot pose (identity)
     //each time store: 
     //  -the whole estimated Isometry3f in a file, for evaluation
-    //  -the x-y position and theta angle in another file, to ease the trajectory plotting
+    //  -the x-y-z coordinates in another file, to ease the trajectory plotting
     out_est_traj << est_rob_pose.translation().transpose() << endl;
     out_est_pose << est_rob_pose.matrix() << endl << endl;
 

@@ -4,6 +4,16 @@
 #include "kdtree_utils.h"
 
 namespace vo{
+    /*
+        TreeNode_ class
+        Each point in the kdtree has the structure of the defined struct Point,
+        having:
+            id: representing the index of the Point in the vector (since with kdtrees the information is lost)
+            appearance: a 10-dimensional vector which uniquely defines the point
+        This kind of Point struct is used to represent both Point2d and Point3d
+        since to compute correspondences the information about the dimension of the Point is not relevant
+        To compare the points in order to find correspondences the points appearances are considered
+    */
     template <typename IteratorType_>
     class TreeNode_ {
     public:
