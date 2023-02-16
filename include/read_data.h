@@ -12,16 +12,16 @@
 namespace vo{
 
     //return a camera object with parameters specified in camera.dat file
-    Camera getCamera();
+    Camera getCamera(std::filesystem::path& dataset);
 
     //read the ground truth trajectory (x-y-theta) from trajectory.dat file
-    Vector3fVector getGroundTruthTrajectory();
+    Vector3fVector getGroundTruthTrajectory(std::filesystem::path& dataset);
 
     //read the ground truth world points from world.dat file
-    Points3dVector getWorld();
+    Points3dVector getWorld(std::filesystem::path& dataset);
 
     //read all meas-XXXXX.dat files and store observations in a vector
-    ObsVector getObservations();
+    ObsVector getObservations(std::filesystem::path& dataset);
 
     //read the estimated trajectory (x-y-z)
     Vector3fVector getEstimatedTrajectory();

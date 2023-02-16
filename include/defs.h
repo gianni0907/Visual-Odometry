@@ -9,6 +9,7 @@
 #include <iostream>
 #include <unistd.h>
 #include <sys/time.h>
+#include <filesystem>
 
 namespace vo {
     typedef Eigen::Matrix<float, 2, 1> Vector2f;

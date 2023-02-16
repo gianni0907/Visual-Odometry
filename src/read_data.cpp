@@ -3,14 +3,13 @@
 namespace vo{
     using namespace std;
 
-    Camera getCamera(){
+    Camera getCamera(std::filesystem::path& dataset){
         Eigen::Matrix3f K;
         Eigen::Isometry3f cam_in_rob;
         float z_near,z_far,width,height;
         char trash[100];
         ifstream indata;
-        char* path=getenv("HOME");
-        indata.open(string(path) + "/Desktop/probrob_proj/02-VisualOdometry/data/camera.dat");
+        indata.open(string(dataset) + "/camera.dat");
         if(!indata){
             cerr << "Error: camera.dat file could not be opened" << endl;
             exit(1);
@@ -37,13 +36,12 @@ namespace vo{
         return cam;
     }
 
-    Vector3fVector getGroundTruthTrajectory(){
+    Vector3fVector getGroundTruthTrajectory(std::filesystem::path& dataset){
         Vector3fVector trajectory(N_POSES);
         ifstream indata;
         float trash;
-        char* path=getenv("HOME");
         int curr_pose=0;
-        indata.open(string(path) + "/Desktop/probrob_proj/02-VisualOdometry/data/trajectory.dat");
+        indata.open(string(dataset) + "/trajectory.dat");
         if(!indata){
             cerr << "Error: trajectory.dat file could not be opened" << endl;
             exit(1);
@@ -60,12 +58,11 @@ namespace vo{
         return trajectory;
     }
 
-    Points3dVector getWorld(){
+    Points3dVector getWorld(std::filesystem::path& dataset){
         Points3dVector world_points(N_POINTS);
         int curr_point=0;
         ifstream indata;
-        char* path=getenv("HOME");
-        indata.open(string(path) + "/Desktop/probrob_proj/02-VisualOdometry/data/world.dat");
+        indata.open(string(dataset) + "/world.dat");
         if(!indata){
             cerr << "Error: world.dat file could not be opened" << endl;
             exit(1);
@@ -83,25 +80,24 @@ namespace vo{
         return world_points;
     }
 
-    ObsVector getObservations(){
+    ObsVector getObservations(std::filesystem::path& dataset){
         ObsVector observations(N_POSES);
         int curr_meas=0;
         int curr_point=0;
         char trash_word[100];
         float trash_float;
         ifstream indata;
-        const char* path1="/Desktop/probrob_proj/02-VisualOdometry/data/meas-0000";
-        const char* path2="/Desktop/probrob_proj/02-VisualOdometry/data/meas-000";
-        const char* path3="/Desktop/probrob_proj/02-VisualOdometry/data/meas-00";
-        const char* home=getenv("HOME");
+        const char* path1="/meas-0000";
+        const char* path2="/meas-000";
+        const char* path3="/meas-00";
         for (auto& meas: observations){
             meas.points.resize(N_POINTS);
             if (curr_meas<10)
-                indata.open(string(home) + string(path1) + to_string(curr_meas) + ".dat");
+                indata.open(string(dataset) + string(path1) + to_string(curr_meas) + ".dat");
             else if (curr_meas<100)
-                indata.open(string(home) + string(path2) + to_string(curr_meas) + ".dat");
+                indata.open(string(dataset) + string(path2) + to_string(curr_meas) + ".dat");
             else
-                indata.open(string(home) + string(path3) + to_string(curr_meas) + ".dat");
+                indata.open(string(dataset) + string(path3) + to_string(curr_meas) + ".dat");
             if(!indata){
             cerr << "Error: file could not be opened" << endl;
             exit(1);
@@ -135,9 +131,9 @@ namespace vo{
     {
         Vector3fVector trajectory(N_POSES);
         ifstream indata;
-        char* path=getenv("HOME");
+        const std::filesystem::path& path=std::filesystem::current_path();
         int curr_pose=0;
-        indata.open(string(path) + "/Desktop/probrob_proj/estimation/est_trajectory.dat");
+        indata.open(string(path) + "/../estimation/est_trajectory.dat");
         if(!indata){
             cerr << "Error: est_trajectory.dat file could not be opened" << endl;
             exit(1);
@@ -158,8 +154,8 @@ namespace vo{
         int curr_pose=0;
         ifstream indata;
         char trash[100];
-        char* path=getenv("HOME");
-        indata.open(string(path) + "/Desktop/probrob_proj/estimation/est_pose.dat");
+        const std::filesystem::path& path=std::filesystem::current_path();
+        indata.open(string(path) + "/../estimation/est_pose.dat");
         if(!indata){
             cerr << "Error: est_pose.dat file could not be opened" << endl;
             exit(1);
@@ -181,8 +177,8 @@ namespace vo{
         Points3dVector est_points(N_POINTS);
         int curr_point=0;
         ifstream indata;
-        char* path=getenv("HOME");
-        indata.open(string(path) + "/Desktop/probrob_proj/estimation/est_world.dat");
+        const std::filesystem::path& path=std::filesystem::current_path();
+        indata.open(string(path) + "/../estimation/est_world.dat");
         if(!indata){
             cerr << "Error: est_world.dat file could not be opened" << endl;
             exit(1);

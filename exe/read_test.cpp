@@ -5,11 +5,15 @@ using namespace std;
 using namespace vo;
 
 int main (int args, char** argv){
+    //Take from keyboard the path to the dataset folder
+    std::filesystem::path dataset;
+    cout << "Insert the path to dataset folder" << endl;
+    cin >> dataset;
 
     //test camera.dat file read
     Camera cam;
     Eigen::Isometry3f cam_in_rob;
-    cam=getCamera();
+    cam=getCamera(dataset);
     Eigen::Vector2f dimension;
     dimension=cam.getDimension();
     cam_in_rob=cam.camInRobPose();
@@ -17,7 +21,7 @@ int main (int args, char** argv){
     cout << cam_in_rob.matrix() << endl;
 
     //test trajectory.dat file read
-    Vector3fVector trajectory=getGroundTruthTrajectory();
+    Vector3fVector trajectory=getGroundTruthTrajectory(dataset);
     int num_poses=trajectory.size();
     cout << num_poses << endl;
     cout << trajectory[120].x() << "," <<
@@ -25,7 +29,7 @@ int main (int args, char** argv){
             trajectory[120].z() << endl;
 
     //test world.dat file read
-    Points3dVector world_points=getWorld();
+    Points3dVector world_points=getWorld(dataset);
     int num_points=world_points.size();
     cout << num_points << endl;
     cout << world_points[598].id << "\t[" <<
@@ -37,7 +41,7 @@ int main (int args, char** argv){
     cout << "]" << endl;
 
     //test meas-XXXXX.dat files read
-    ObsVector observations=getObservations();
+    ObsVector observations=getObservations(dataset);
     int num_obs=observations.size();
     cout << num_obs << endl;
     cout << "[" << observations[65].gt_pose.x() << ","

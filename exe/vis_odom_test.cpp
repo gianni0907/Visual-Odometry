@@ -9,10 +9,14 @@ using namespace vo;
 
 int main (int argc, char** argv){
     //Initialization from files
-    Camera cam=getCamera();
+    //Take from keyboard the path to the dataset folder
+    std::filesystem::path dataset;
+    cout << "Insert the path to dataset folder" << endl;
+    cin >> dataset;
+    Camera cam=getCamera(dataset);
     Eigen::Matrix3f K=cam.cameraMatrix();
     Eigen::Isometry3f cam_in_rob=cam.camInRobPose();
-    ObsVector measurements=getObservations();
+    ObsVector measurements=getObservations(dataset);
     
     //Instantiate useful variables
     Eigen::Isometry3f est_transf=Eigen::Isometry3f::Identity();
@@ -28,18 +32,18 @@ int main (int argc, char** argv){
     //Instantiate file handlers to write ground truth and estimated robot trajectory in files
     //and also to save ground truth and estimated world (i.e. 3d points)
     ofstream out_est_traj,out_est_wrld,out_est_pose;
-    char* path=getenv("HOME");
-    out_est_traj.open(string(path)+"/Desktop/probrob_proj/estimation/est_trajectory.dat");
+    const std::filesystem::path& path=std::filesystem::current_path();
+    out_est_traj.open(string(path)+"/../estimation/est_trajectory.dat");
     if(!out_est_traj){
         cerr << "Error: est_trajectory.dat file could not be opened" << endl;
         exit(1);
     }
-    out_est_wrld.open(string(path)+"/Desktop/probrob_proj/estimation/est_world.dat");
+    out_est_wrld.open(string(path)+"/../estimation/est_world.dat");
     if(!out_est_wrld){
         cerr << "Error: est_world.dat file could not be opened" << endl;
         exit(1);
     }
-    out_est_pose.open(string(path)+"/Desktop/probrob_proj/estimation/est_pose.dat");
+    out_est_pose.open(string(path)+"/../estimation/est_pose.dat");
     if(!out_est_pose){
         cerr << "Error: est_pose.dat file could not be opened" << endl;
         exit(1);
