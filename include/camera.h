@@ -51,8 +51,8 @@ namespace vo {
         int _width;
         float _z_near;
         float _z_far;
+        Eigen::Matrix3f _camera_matrix;
         Eigen::Isometry3f _world_in_cam_pose;
         Eigen::Isometry3f _cam_in_rob_pose;
-        Eigen::Matrix3f _camera_matrix;
     };
 }

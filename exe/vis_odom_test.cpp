@@ -25,7 +25,6 @@ int main (int argc, char** argv){
     const bool keep_indices=false;
     Points3dVector curr_3dpoints;
     vector<float> errors;
-    int num_triangulated_points=0;
     double t_start_solve=0;
     double t_end_solve=0;
     
@@ -70,12 +69,12 @@ int main (int argc, char** argv){
     out_est_pose << est_rob_pose.matrix() << endl << endl;
 
     //triangulate points, expressing them in the cam1 frame
-    num_triangulated_points=triangulatePoints(K,
-                                              est_transf.inverse(),
-                                              measurements[1].points,
-                                              measurements[0].points,
-                                              curr_3dpoints,
-                                              errors);
+    triangulatePoints(K,
+                      est_transf.inverse(),
+                      measurements[1].points,
+                      measurements[0].points,
+                      curr_3dpoints,
+                      errors);
 
     PICPSolver solver;
     //set initial guess used for the picp procedure
@@ -108,15 +107,14 @@ int main (int argc, char** argv){
         //triangulate the points on the considered images and with the estimated transformation,
         //obtain a new set of triangulated points expressed in cam i+1
         Points3dVector new_triang;
-        num_triangulated_points=triangulatePoints(K,
-                                                  est_transf.inverse(),
-                                                  measurements[i+1].points,
-                                                  measurements[i].points,
-                                                  new_triang,
-                                                  errors);
-        //here choose ONLY one of the following two lines
-        //curr_3dpoints=new_triang; //run this line to consider ONLY new triangulated points for next picp iteration
-        curr_3dpoints=mergePoints(est_transf,new_triang,curr_3dpoints); //run this if you want to merge new triangulate points with the old ones
+        triangulatePoints(K,
+                           est_transf.inverse(),
+                           measurements[i+1].points,
+                           measurements[i].points,
+                           new_triang,
+                           errors);
+        //merge new triangulated points with the old ones
+        curr_3dpoints=mergePoints(est_transf,new_triang,curr_3dpoints);
     }
 
     //express estimated world points in world frame and save them in file
