@@ -94,12 +94,14 @@ Then, consider two separate errors for rotational and translational parts:
 - translation part: *norm(rel_T(1:3,4)/norm(rel_GT(1:3,4))*
 
 The metric to compare the estimated map (up to a scale) with the ground truth map is the *RMSE*:
-- use the estimated ratio (first translation error) to scale the estimated points
+- use the estimated ratio *2.1433* (first translation error[^1]) to scale the estimated points
 - find correspondences between estimated points and real world points
 - compute the *RMSE*
 
 The computed value for the *RMSE*, also printed as output by the `./evaluation_test` executable is:
 #### *RMSE* = 0.203287
+
+[^1]: I use the first translation error because it corresponds to the ratio between the estimated translation with epipolar geometry and the ground truth one.
 
 ### Plots
 It is possible to plot some quantities on gnuplot to compare ground truth data vs estimated ones. To do so, go in `<directory>/prob_rob_proj` folder and open gnuplot.
