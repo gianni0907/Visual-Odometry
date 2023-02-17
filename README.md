@@ -37,9 +37,12 @@ Finally, I decided to create another class *CorrespondenceFinder* which has as a
 
 ## Initialization
 In the code I refer to pose of *camera(i)* to express the pose of the camera corresponding to the *i-th* image observed.
+
 Initialization step consists in the estimation of the transformation expressing the *camera(0)* in *camera(1)* frame.
 This is done using epipolar geometry on the first two observations (images) of the sequence.
+
 Notice that in the estimation of the fundamental matrix two transformations are used to normalize image points within [-1,1] and avoid numerical instability.
+
 Once obtained the estimated transformation (correct up to a scale), I use it (actually its inverse) to triangulate the points in the first two images of the sequence, obtaining the first set of 3d points expressed in *camera(1)* frame.
 
 ## Projective ICP 
