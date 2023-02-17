@@ -100,6 +100,7 @@ splot "estimation/gt_trajectory.dat" u 1:2:3 w lp pt 7 ps 0.5 t "gt trajectory",
 ```
 - ground truth vs estimated (scaled) corresponding world points
 ```
+unset zrange
 splot "estimation/gt_points_pruned.dat" u 2:3:4  pt 7 ps 0.7 t "ground truth points", "estimation/est_points_scaled.dat" u 2:3:4 pt 7 ps 0.7 t "scaled estimated points","estimation/correspondences.dat" u 1:2:3:($4-$1):($5-$2):($6-$3) with vectors nohead t "correspondences"
 ```
 - rotation and translation errors
