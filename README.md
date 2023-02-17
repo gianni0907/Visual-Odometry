@@ -95,7 +95,7 @@ The metric to compare the estimated map (up to a scale) with the ground truth ma
 It is possible to plot some quantities on gnuplot to compare ground truth data vs estimated ones. To do so, go in `<directory>/prob_rob_proj` folder and open gnuplot.
 - ground truth vs estimated Trajectory
 ```
-set zrange [-0.1 0.1]
+set zrange [-0.1:0.1]
 splot "estimation/gt_trajectory.dat" u 1:2:3 w lp pt 7 ps 0.5 t "gt trajectory", "estimation/est_trajectory.dat" u 1:2:3 w lp pt 7 ps 0.5 t "est trajectory"
 ```
 - ground truth vs estimated (scaled) corresponding world points

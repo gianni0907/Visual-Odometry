@@ -45,6 +45,7 @@ int main (int argc, char** argv){
         cv::imshow("cam_test", shown_image);
         key=cv::waitKey(0);
     }
+    cout << "Projected points:" << endl;
     for (int i=0; i< num_projected_points; i++)
         cout << img_points[i].p << endl;
 

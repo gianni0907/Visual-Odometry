@@ -82,6 +82,7 @@ int main (int argc, char** argv){
             cout << inv_rel_transf[0](i,j)/est_transf[0](i,j) << " ";
         cout << endl;
     }
+    cout << endl;
 
     //then triangulate to obtain points expressed in cam1 ref frame
     //since relative icp is realized
@@ -92,7 +93,7 @@ int main (int argc, char** argv){
                                                  triang_points,
                                                  errors);
     cout << "Number of triangulated points after first triangulation: " << num_triangulated_points << endl;
-    
+    cout << endl;
     ////NOTE: PICP done considering pose of camera i-1 expressed in camera i
     //consider:
     //  triangulated points as world_points
@@ -120,6 +121,7 @@ int main (int argc, char** argv){
             cout << inv_rel_transf[1](i,j)/est_transf[1](i,j) << " ";
         cout << endl;
     }
+    cout << endl;
     Points3dVector new_triang;
     num_triangulated_points=triangulatePoints(camera_matrix,
                                                  est_transf[1].inverse(),

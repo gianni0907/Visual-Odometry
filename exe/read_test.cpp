@@ -17,50 +17,42 @@ int main (int args, char** argv){
     Eigen::Vector2f dimension;
     dimension=cam.getDimension();
     cam_in_rob=cam.camInRobPose();
-    cout << dimension(0) << "," << dimension(1) << endl;
-    cout << cam_in_rob.matrix() << endl;
+    cout << "Camera dimension (height,width): " << dimension(0) << ", " << dimension(1) << endl;
+    cout << endl;
+    cout << "Pose of the camera in robot frame:" << endl;
+    cout << cam_in_rob.matrix() << endl << endl;
 
     //test trajectory.dat file read
     Vector3fVector trajectory=getGroundTruthTrajectory(dataset);
     int num_poses=trajectory.size();
-    cout << num_poses << endl;
-    cout << trajectory[120].x() << "," <<
-            trajectory[120].y() << "," <<
-            trajectory[120].z() << endl;
+    cout << "Total number of trajectory poses: " << num_poses << endl << endl;
+    cout << "A generic sampled pose:" << endl;
+    cout << trajectory[120].x() << ", " <<
+            trajectory[120].y() << ", " <<
+            trajectory[120].z() << endl << endl;
 
     //test world.dat file read
     Points3dVector world_points=getWorld(dataset);
     int num_points=world_points.size();
-    cout << num_points << endl;
+    cout << "Number of world points: " << num_points << endl;
+    cout << "A generic sampled world point:" << endl;
     cout << world_points[598].id << "\t[" <<
             world_points[598].p.x() << "," <<
             world_points[598].p.y() << "," <<
             world_points[598].p.z() << "]\t[";
     for (int i=0;i<world_points[598].appearance.size();i++)
         cout << world_points[598].appearance(i) << ",";
-    cout << "]" << endl;
+    cout << "]" << endl << endl;
 
     //test meas-XXXXX.dat files read
     ObsVector observations=getObservations(dataset);
     int num_obs=observations.size();
-    cout << num_obs << endl;
-    cout << "[" << observations[65].gt_pose.x() << ","
-                << observations[65].gt_pose.y() << "," 
-                << observations[65].gt_pose.z() << "]\t" << endl;
-    cout << "[" << observations[65].points[10].p.x() << ","
-                << observations[65].points[10].p.y() << "]\t[";
-    for (int i=0;i<observations[65].points[10].appearance.size();i++)
-        cout << observations[65].points[10].appearance(i) << ",";
-    cout << "]" << endl;
+    cout << "Total number of observations: " << num_obs << endl;
+    cout << "A generic sampled observation:" << endl;
+    cout << "gt_pose: [" << observations[65].gt_pose.x() << ","
+                         << observations[65].gt_pose.y() << "," 
+                         << observations[65].gt_pose.z() << "]\t" << endl;
+    cout << "Image points for the considered observation: " << endl;
     for (size_t i=0;i<observations[65].points.size();i++)
-        cout << observations[65].points[i].id << endl;
-
-    //test est_pose.dat read
-    TransfVector est_pose=getEstimatedPoses();
-    cout << est_pose[N_POSES-1].matrix() << endl;
-
-    //test est_world.dat read
-    Points3dVector est_points=getEstimatedWorld();
-    for (size_t i=0;i<est_points.size();i++)
-        cout << est_points[i].id << "\t" << est_points[i].p.transpose() << endl;
+        cout << observations[65].points[i].p.transpose() << endl;
 }
