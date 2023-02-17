@@ -49,17 +49,17 @@ At the end of the *i-th* PICP iteration:
 ## Compilation
 - Clone the repository on github:
 ```
-    git clone https://github.com/gianni0907/prob_rob_proj <directory>
+git clone https://github.com/gianni0907/prob_rob_proj <directory>
 ```
-- On the system console, go in `<directory>` folder and execute build sequence:
+- On the system console, go in `<directory>/prob_rob_proj` folder and execute build sequence:
 ```
-    mkdir build
-    cd build
-    cmake ..
-    make
+mkdir build
+cd build
+cmake ..
+make
 ```
 ## Execution
-The following 8 binaries are created in the `<directory>/build/exe` folder.
+The following 8 binaries are created in the `<directory>/prob_rob_proj/build/exe` folder.
 The first 4 are realized on synthetic data:
 - `./cam_test`: to test projection function of the implemented pinhole camera model
 - `./epipolar_test`: to test epipolar geometry functions
@@ -92,17 +92,17 @@ The metric to compare the estimated map (up to a scale) with the ground truth ma
 - compute the *RMSE*
 
 ### Plots
-It is possible to plot some quantities on gnuplot to compare ground truth data vs estimated ones. To do so, go in `<directory>` folder and open gnuplot.
+It is possible to plot some quantities on gnuplot to compare ground truth data vs estimated ones. To do so, go in `<directory>/prob_rob_proj` folder and open gnuplot.
 - ground truth vs estimated Trajectory
 ```
-    set zrange [-0.1 0.1]
-	splot "estimation/gt_trajectory.dat" u 1:2:3 w lp pt 7 ps 0.5 t "gt trajectory", "estimation/est_trajectory.dat" u 1:2:3 w lp pt 7 ps 0.5 t "est trajectory"
+set zrange [-0.1 0.1]
+splot "estimation/gt_trajectory.dat" u 1:2:3 w lp pt 7 ps 0.5 t "gt trajectory", "estimation/est_trajectory.dat" u 1:2:3 w lp pt 7 ps 0.5 t "est trajectory"
 ```
 - ground truth vs estimated (scaled) corresponding world points
 ```
-    splot "estimation/gt_points_pruned.dat" u 2:3:4  pt 7 ps 0.7 t "ground truth points", "estimation/est_points_scaled.dat" u 2:3:4 pt 7 ps 0.7 t "scaled estimated points","estimation/correspondences.dat" u 1:2:3:($4-$1):($5-$2):($6-$3) with vectors nohead t "correspondences"
+splot "estimation/gt_points_pruned.dat" u 2:3:4  pt 7 ps 0.7 t "ground truth points", "estimation/est_points_scaled.dat" u 2:3:4 pt 7 ps 0.7 t "scaled estimated points","estimation/correspondences.dat" u 1:2:3:($4-$1):($5-$2):($6-$3) with vectors nohead t "correspondences"
 ```
 - rotation and translation errors
 ```
-    plot "errors/rotation_err.dat" t "rotation error" w lp pt 7 ps 0.5, "errors/translation_err.dat" t "translation error" w lp pt 7 ps 0.5
+plot "errors/rotation_err.dat" t "rotation error" w lp pt 7 ps 0.5, "errors/translation_err.dat" t "translation error" w lp pt 7 ps 0.5
 ```
