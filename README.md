@@ -98,6 +98,9 @@ The metric to compare the estimated map (up to a scale) with the ground truth ma
 - find correspondences between estimated points and real world points
 - compute the *RMSE*
 
+The computed value for the *RMSE*, also printed as output by the `./evaluation_test` executable is:
+#### *RMSE* = 0.203287
+
 ### Plots
 It is possible to plot some quantities on gnuplot to compare ground truth data vs estimated ones. To do so, go in `<directory>/prob_rob_proj` folder and open gnuplot.
 - ground truth vs estimated Trajectory
