@@ -72,6 +72,8 @@ Then, the remaining 4 binaries treat real data:
 - `./vis_odom_test`: complete visual odometry program
 - `./evaluation_test`: to evaluate the estimated quantities, comparing with ground truth values
 
+NOTE: please run them from the `build/` directory, to correctly save files - whenever they are created - in `<directory>/prob_rob_proj/estimation` and `<directory>/prob_rob_proj/errors` folders
+
 ## Metrics
 In the `./evaluation_test` executable the following matrics values are computed.
 
