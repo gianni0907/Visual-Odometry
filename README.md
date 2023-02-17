@@ -9,26 +9,28 @@ In order to properly handle all the informations related to world points (3d) or
 
 Note that in both cases the *id* field is stored only for completeness, it is never used in the project.
 ### Observations
-Moreover, each image of the input sequence is stored in the following struct:
+Moreover, data related to each image of the input sequence are stored in the following struct:
 - *Observations*, with fields: 
-    *gt_pose* (3d float vector storing ground truth x-y position and theta angle)
-    *points* (vector of Points2d elements, containing all the image points related to the observation)
+    - *gt_pose* (3d float vector storing ground truth x-y position and theta angle)
+    - *points* (vector of Points2d elements, containing all the image points related to the observation)
 
-Also in this struct, the gt_pose is not used in the project, it is considered only for evaluation.
+Also in this struct, the *gt_pose* is not used in the project, it is considered only for evaluation.
 ### Camera parameters
 The camera parameters given in input are stored as attributes of a *Camera* object. They are:
-- Camera matrix (3x3 matrix)
-- Pose of the world in camera frame (Isometry3f)
+- Camera matrix (*3x3* matrix)
+- Pose of the world in camera frame (*Isometry3f*)
 - Spatial dimension (*width*,*height*)
 - Depth range (*z_near*,*z_far*)
 
-Furthermore, I add to the given implementation of Camera class also the Isometry which represents the pose of the camera in the robot frame.
+Furthermore, I add to the given implementation of Camera class also the *Isometry3f* which represents the pose of the camera in the robot frame.
 
 ## Data Association
-To find a correspondence between two points, their dimensionality is not relevant: they can be both 2d points (i.e projected on image planes), or both 3d points, or also mixed. Indeed, what matters are their appearances, so we need to compare them. Since a point appearance is characterized by a 10-dimensional vector, to compute data association I rely on KD-Trees, since they are more suitable when the points dimension increases. In order to change the least possible the available implementation of KD-Tree I create an additional struct:
+To find a correspondence between two points, their dimension is not relevant: they can be both 2d points (i.e projected on image planes), or both 3d points, or also mixed. Indeed, what matters are their appearances, so we need to compare them.
+
+Since a point appearance is characterized by a 10-dimensional vector, to compute data association I rely on KD-Trees, because they are more suitable when the points dimension increases. In order to change the least possible the available implementation of KD-Tree I create an additional struct:
 - *Point*, with fields: *id* (int), *appearance* (10d float vector)
 
-Notice that loosing the information about point coordinates (useless in this context) I can treat in the same way both 2d and 3d points.  
+Notice that loosing the information about point coordinates - useless in this context - I can treat in the same way both 2d and 3d points.  
 Moreover, here the *id* field has a different meaning wrt *Points2d* and *Points3d* structs. In fact, here it no longer represents the unique point identifier, but the index of the point in the considered vector of points. It is necessary to explicitly store it since the KD-Tree machinery does not preserve the vector ordering.
 
 ## Initialization
@@ -40,7 +42,7 @@ Once obtained the estimated transformation (correct up to a scale), I use it (ac
 
 ## Projective ICP 
 Then I can start using the projective ICP machinery iteratively. At the *i-th* iteration of PICP the estimation of the pose of *camera(i)* in *camera(i+1)* frame is obtained.
-At the end of *i-th* PICP iteration:
+At the end of the *i-th* PICP iteration:
 - update the estimated robot pose (using the transformation expressing the camera pose in robot frame)
 - triangulate the points on images *(i)* and *(i+1)*, expressing them in *camera(i+1)* frame
 - merge the new triangulated points with the old ones, in order to use all of them for the next iteration.
@@ -72,7 +74,9 @@ Then, the remaining 4 binaries treat real data:
 
 ## Metrics
 In the `./evaluation_test` executable the following matrics values are computed.
-The metric to evaluate the robot pose estimation is based on the following errors.
+
+The metric to evaluate the robot pose estimation is given by rotation and translation errors.
+
 Given two consecutive robot poses in world *T_0* and *T_1*
 - compute the relative transformation *rel_T=inv(T_0)*T_1*
 - compute also the relative ground truth transformation *rel_GT=inv(GT_0)*GT_1*
@@ -82,10 +86,11 @@ Then, consider two separate errors for rotational and translational parts:
 - rotation part: *trace(eye(3)-error_T(1:3,1:3))*
 - translation part: *norm(rel_T(1:3,4)/norm(rel_GT(1:3,4))*
 
-The *RMSE* to compare the estimated map (up to a scale) with the ground truth
+The metric to compare the estimated map (up to a scale) with the ground truth map is the *RMSE*:
 - use the estimated ratio (first translation error) to scale the estimated points
 - find correspondences between estimated points and real world points
 - compute the *RMSE*
+
 ### Plots
 It is possible to plot some quantities on gnuplot to compare ground truth data vs estimated ones. To do so, go in `<directory>` folder and open gnuplot.
 - ground truth vs estimated Trajectory
