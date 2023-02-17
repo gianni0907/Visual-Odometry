@@ -80,9 +80,9 @@ Then, the remaining 4 binaries treat real data:
 NOTE: please run them from the `build/` directory, to correctly save files - whenever they are created - in `<directory>/prob_rob_proj/estimation` and `<directory>/prob_rob_proj/errors` folders
 
 ## Metrics
-In the `./evaluation_test` executable the following matrics values are computed.
-
-The metric to evaluate the robot pose estimation is given by rotation and translation errors.
+In the `./evaluation_test` executable the following metrics values are computed.
+### Rotation and translation errors
+The metric to evaluate the robot pose estimation is given by the following rotation and translation errors.
 
 Given two consecutive robot poses in world *T_0* and *T_1*
 - compute the relative transformation *rel_T=inv(T_0)*T_1*
@@ -93,29 +93,56 @@ Then, consider two separate errors for rotational and translational parts:
 - rotation part: *trace(eye(3)-error_T(1:3,1:3))*
 - translation part: *norm(rel_T(1:3,4)/norm(rel_GT(1:3,4))*
 
-The metric to compare the estimated map (up to a scale) with the ground truth map is the *RMSE*:
-- use the estimated ratio *2.1433* (first translation error[^1]) to scale the estimated points
+Actually, it is necessary to compute the translational error two times.
+
+The first time the computation is done considering the estimated robot poses as they have been computed.
+
+Then, I rescale the whole estimated trajectory using the estimated ratio *2.1433* (first of the translation errors[^1] just computed) and I recompute the translation errors considering the scaled estimated trajectory.
+
+Note that the scaling only affects the translational part, hence it is sufficient to compute rotation errors once.
+### RMSE
+Moreover, another metric to compare the scaled version of the estimated trajectory with the ground truth trajectory is used: the *RMSE*.
+
+The same metric is also used to compare the estimated map with the ground truth map, considering only the corresponding points
+- use the estimated ratio *2.1433*  to scale the estimated points
 - find correspondences between estimated points and real world points
 - compute the *RMSE*
 
-The computed value for the *RMSE*, also printed as output by the `./evaluation_test` executable is:
-#### *RMSE* = 0.203287
+In the following table the two computed *RMSE* values
+|*RMSE trajectory*|*RMSE map*|
+|-----------------|----------|
+|0.135233|0.203287|
 
 [^1]: I use the first translation error because it corresponds to the ratio between the estimated translation with epipolar geometry and the ground truth one.
 
 ### Plots
-It is possible to plot some quantities on gnuplot to compare ground truth data vs estimated ones. To do so, go in `<directory>/prob_rob_proj` folder and open gnuplot.
-- ground truth vs estimated Trajectory
+It is possible to plot some quantities to compare ground truth data vs estimated ones.
+
+To plot them on gnuplot, go in `<directory>/prob_rob_proj` folder, open gnuplot and run the command below each image.
+
+![Ground truth vs estimated Trajectory](plots/gt_vs_est_traj.png)
+
 ```
 set zrange [-0.1:0.1]
 splot "estimation/gt_trajectory.dat" u 1:2:3 w lp pt 7 ps 0.5 t "gt trajectory", "estimation/est_trajectory.dat" u 1:2:3 w lp pt 7 ps 0.5 t "est trajectory"
 ```
-- ground truth vs estimated (scaled) corresponding world points
+
+![Ground truth vs scaled estimated Trajectory](plots/gt_vs_scaledest_traj.png)
+
+```
+set zrange [-0.1:0.1]
+splot "estimation/gt_trajectory.dat" u 1:2:3 w lp pt 7 ps 0.5 t "gt trajectory", "estimation/est_trajectory.dat" u 1:2:3 w lp pt 7 ps 0.5 t "est trajectory"
+```
+
+![ground truth world points vs scaled estimated corresponding points](plots/gt_vs_est_world.png)
+
 ```
 unset zrange
 splot "estimation/gt_points_pruned.dat" u 2:3:4  pt 7 ps 0.7 t "ground truth points", "estimation/est_points_scaled.dat" u 2:3:4 pt 7 ps 0.7 t "scaled estimated points","estimation/correspondences.dat" u 1:2:3:($4-$1):($5-$2):($6-$3) with vectors nohead t "correspondences"
 ```
-- rotation and translation errors
+
+![rotation and translation errors (scaled and not)](plots/errors.png)
+
 ```
-plot "errors/rotation_err.dat" t "rotation error" w lp pt 7 ps 0.5, "errors/translation_err.dat" t "translation error" w lp pt 7 ps 0.5
+plot "errors/rotation_err.dat" t "rotation error" w lp pt 7 ps 0.5, "errors/translation_err.dat" t "translation error" w lp pt 7 ps 0.5, "errors/translation_err_scaled.dat" t "translation error scaled" w lp pt 7 ps 0.5
 ```
