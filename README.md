@@ -33,6 +33,8 @@ Since a point appearance is characterized by a 10-dimensional vector, to compute
 Notice that loosing the information about point coordinates - useless in this context - I can treat in the same way both 2d and 3d points.  
 Moreover, here the *id* field has a different meaning wrt *Points2d* and *Points3d* structs. In fact, here it no longer represents the unique point identifier, but the index of the point in the considered vector of points. It is necessary to explicitly store it since the KD-Tree machinery does not preserve the vector ordering.
 
+Finally, I decided to create another class *CorrespondenceFinder* which has as attribute the object of *TreeNode_* class - instead of instantiate an object of *TreeNode_* class in a function which returns the correspondences. This is done in order to reuse for multiple searches the same precomputed KD_Tree structure, avoiding - whenever it is possible - the creation of a new one.
+
 ## Initialization
 In the code I refer to pose of *camera(i)* to express the pose of the camera corresponding to the *i-th* image observed.
 Initialization step consists in the estimation of the transformation expressing the *camera(0)* in *camera(1)* frame.
