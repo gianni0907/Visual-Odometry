@@ -84,13 +84,19 @@ In the `./evaluation_test` executable the following metrics values are computed.
 ### Rotation and translation errors
 The metric to evaluate the robot pose estimation is given by the following rotation and translation errors.
 
-Given two consecutive robot poses in world *T_0* and *T_1*
-- compute the relative transformation *rel_T=inv(T_0)*T_1*
-- compute also the relative ground truth transformation *rel_GT=inv(GT_0)*GT_1*
-- compute the *SE(3)* error: *error_T=inv(rel_T)*rel_GT*
+Given two consecutive robot poses in world $T_0,T_1$
+- compute the relative transformation $T_rel=\textbf{T_0}^{-1}T_1$
+- compute also the relative ground truth transformation $\textbf{T}_{rel,GT}=\textbf{T}^{-1}_{0,GT}\textbf{T}_{1,GT}$
+- compute the $SE(3)$ error: $e_T=\textbf{T}^{-1}_{rel}\textbf{T}_{rel,GT}$
 
 Then, consider two separate errors for rotational and translational parts:
-- rotation part: *trace(eye(3)-error_T(1:3,1:3))*
+```math
+e_{\theta}=trace(\textbf{I}_{3}-\textbf{e}_{T}(1:3,1:3))
+```
+```math
+e_t=\frac{||\textbf{T}_{rel}(1:3,4)||}{||\textbf{T}_{rel,GT}(1:3,4)||}
+```
+- rotation part: trace(eye(3)-error_T(1:3,1:3))
 - translation part: *norm(rel_T(1:3,4)/norm(rel_GT(1:3,4))*
 
 Actually, it is necessary to compute the translational error two times.
