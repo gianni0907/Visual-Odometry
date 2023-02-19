@@ -87,7 +87,7 @@ The metric to evaluate the robot pose estimation is given by the following rotat
 Given two consecutive robot poses in world $T_0,T_1$
 - compute the relative transformation 
 ```math 
-\textbf{T}_{rel}=\textbf{T_0}^{-1}\textbf{T}_{1}
+\textbf{T}_{rel}=\textbf{T0}^{-1}_{0}\textbf{T}_{1}
 ```
 - compute also the relative ground truth transformation 
 ```math
@@ -95,12 +95,12 @@ Given two consecutive robot poses in world $T_0,T_1$
 ```
 - compute the $SE(3)$ error: 
 ```math
-e_T=\textbf{T}^{-1}_{rel}\textbf{T}_{rel,GT}
+T_e=\textbf{T}^{-1}_{rel}\textbf{T}_{rel,GT}
 ```
 
 Then, consider two separate errors for rotational and translational parts:
 ```math
-e_{\theta}=trace(\textbf{I}_{3}-\textbf{e}_{T}(1:3,1:3))
+e_{\theta}=trace(\textbf{I}_{3}-\textbf{T}_{e}(1:3,1:3))
 ```
 ```math
 e_t=\frac{||\textbf{T}_{rel}(1:3,4)||}{||\textbf{T}_{rel,GT}(1:3,4)||}
